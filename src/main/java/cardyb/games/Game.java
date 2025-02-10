@@ -2,14 +2,16 @@ package cardyb.games;
 
 import cardyb.CardPile;
 import cardyb.cards.Card;
+import cardyb.cards.DiscardAndLosePotCard;
 import cardyb.cards.DiscardCard;
-import cardyb.cards.DrawCard;
+import cardyb.cards.DrawCardCard;
 import cardyb.players.Player;
 
 import java.util.*;
 
 public class Game {
     private List<Player> players = new ArrayList<>();
+    private Long pot = 0L;
     private int currentPlayerIndex = 0;
     private Scanner scanner = new Scanner(System.in);
     private CardPile gameDeck = new CardPile("main deck");
@@ -18,13 +20,14 @@ public class Game {
     public Game(int numPlayers) {
         List<Card> tempDeck = new ArrayList<>();
         for (int i = 0; i < 50; i++) { // Increased number of cards
-            tempDeck.add(new DrawCard("Draw 2", 2));
+            tempDeck.add(new DrawCardCard("Draw 2", 2));
             tempDeck.add(new DiscardCard("Discard 2", 2));
+            tempDeck.add(new DiscardAndLosePotCard("Some Magic Card", 2, -45L));
         }
         gameDeck.addCards(tempDeck);
-
+        gameDeck.shufflePile();
         for (int i = 1; i <= numPlayers; i++) {
-            players.add(new Player("Player " + i, gameDeck, gameDiscardPile));
+            players.add(new Player("Player " + i, gameDeck, gameDiscardPile, 900L));
         }
     }
 
@@ -53,7 +56,8 @@ public class Game {
             System.out.println(currentPlayer.getName() + "'s turn.");
             System.out.println("Your hand: " + currentPlayer.handToString());
             System.out.println("Your discard pile: " + currentPlayer.discardPileToString());
-            System.out.println("cardyb.games.Game discard pile: " + gameDiscardPile.toString());
+            System.out.println("Your pot: $" + currentPlayer.getPot());
+            System.out.println("Game discard pile: " + gameDiscardPile.toString());
             if (currentPlayer.hasCards()) {
                 System.out.print("Enter card index to play (or -1 to skip): ");
                 int index = scanner.nextInt();

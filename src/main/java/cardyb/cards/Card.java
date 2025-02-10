@@ -1,10 +1,15 @@
 package cardyb.cards;
 
+import cardyb.actions.GameAction;
 import cardyb.games.Game;
 import cardyb.players.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Card {
-    protected String name;
+    private final String name;
+    private final List<GameAction> actions = new ArrayList<>();
 
     public Card(String name) {
         this.name = name;
@@ -14,6 +19,15 @@ public abstract class Card {
         return name;
     }
 
-    public abstract void play(Player player, Game game);
+    public void addActions(List<GameAction> actions) {
+        this.actions.addAll(actions);
+    }
+
+    public void play(Player player, Game game, Object... params) {
+        System.out.println("\n--- " + player + " is playing " + name + " ---");
+        for (GameAction action : actions) {
+            action.run(player, game, params);  // Execute the action (either default or overridden)
+        }
+    }
 }
 

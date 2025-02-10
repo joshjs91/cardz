@@ -10,22 +10,35 @@ import java.util.List;
 
 public class Player {
     private String name;
+    private Long pot;
     private List<Card> hand = new ArrayList<>();
     private CardPile deck;
     private CardPile discardPile;
 
-    public Player(String name, CardPile deck, CardPile discardPile) {
+    public Player(String name, CardPile deck, CardPile discardPile, Long initialPot) {
         this.name = name;
         this.deck = deck;
         this.discardPile = discardPile;
+        this.pot = initialPot;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public CardPile getDeck() {
-        return deck;
+        return this.deck;
+    }
+
+    public Long getPot() {
+        return pot;
+    }
+
+    public Long changePotBy(Long potChange) {
+        System.out.println(name + " has pot changed by " + potChange);
+        this.pot = Math.max(this.pot + potChange, 0);
+        System.out.println(name + "'s current pot =  " + this.pot);
+        return this.pot;
     }
 
     public CardPile getDiscardPile() {
