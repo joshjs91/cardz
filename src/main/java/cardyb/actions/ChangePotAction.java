@@ -15,7 +15,8 @@ public class ChangePotAction implements GameAction {
     }
 
     @Override
-    public void run(Player player, Game game, Object... params) {
+    public void run(GameActionContext context) {
+        Player player = context.getPlayer();
         player.changePotBy(potAmountToLose);
     }
 }

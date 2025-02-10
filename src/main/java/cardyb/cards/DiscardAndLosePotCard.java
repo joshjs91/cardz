@@ -15,5 +15,4 @@ public class DiscardAndLosePotCard extends Card {
             )
         );
     }
-
 }

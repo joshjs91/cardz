@@ -17,7 +17,9 @@ public class DiscardRandomCardAction implements GameAction {
     }
 
     @Override
-    public void run(Player player, Game game, Object... params) {
+    public void run(GameActionContext context) {
+        Game game = context.getGame();
+        Player player = context.getPlayer();
         for (int i = 0; i < cardsToDiscard; i++) {
             System.out.println("Your hand: " + player.handToString());
             if (player.hasCards()) {

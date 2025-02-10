@@ -15,7 +15,9 @@ public class DrawCardAction implements GameAction {
     }
 
     @Override
-    public void run(Player player, Game game, Object... params) {
+    public void run(GameActionContext context) {
+        Game game = context.getGame();
+        Player player = context.getPlayer();
         player.drawCards(cardsToDraw, game.getDeck());
     }
 }

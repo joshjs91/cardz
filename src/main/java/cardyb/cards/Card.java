@@ -1,6 +1,7 @@
 package cardyb.cards;
 
 import cardyb.actions.GameAction;
+import cardyb.actions.GameActionContext;
 import cardyb.games.Game;
 import cardyb.players.Player;
 
@@ -26,7 +27,7 @@ public abstract class Card {
     public void play(Player player, Game game, Object... params) {
         System.out.println("\n--- " + player + " is playing " + name + " ---");
         for (GameAction action : actions) {
-            action.run(player, game, params);  // Execute the action (either default or overridden)
+            action.run(new GameActionContext(player, game));  // Execute the action (either default or overridden)
         }
     }
 }
