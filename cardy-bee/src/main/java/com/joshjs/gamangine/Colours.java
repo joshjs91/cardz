@@ -1,4 +1,4 @@
-package cardyb;
+package com.example.springboot;
 
 public class Colours {
     // ANSI escape codes
