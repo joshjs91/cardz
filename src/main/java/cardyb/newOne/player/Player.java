@@ -1,55 +1,71 @@
-package cardyb.players;
+package cardyb.newOne.player;
 
-import java.util.ArrayList;
 import cardyb.CardPile;
 import cardyb.Colours;
 import cardyb.cards.Card;
 import cardyb.games.Game;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class Player {
-    private String name;
+    private String id;
     private Map<String, Object> attributes;
     private List<Card> hand = new ArrayList<>();
     private CardPile deck;
     private CardPile discardPile;
 
-    public Player(String name, CardPile deck, CardPile discardPile) {
-        this.name = name;
+    public Player(String id, CardPile deck, CardPile discardPile) {
+        this.id = id;
         this.deck = deck;
         this.discardPile = discardPile;
     }
 
-    public String getName() {
-        return this.name;
+    public String getId() {
+        return id;
     }
 
-    public CardPile getDeck() {
-        return this.deck;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void changeAttribute(String attribute, Object newValue) {
-        //TODO check if attribute is valid
-        System.out.println(name + " has " + attribute + " changed from " + newValue.toString());
-        this.attributes.put(attribute, newValue);
+    public Map<String, Object> getAttributes() {
+        return attributes;
     }
 
-    public boolean hasCards() {
-        return !hand.isEmpty();
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
     }
 
     public List<Card> getHand() {
         return hand;
     }
 
-    public String discardPileToString() {
-        return discardPile.toString();
+    public void setHand(List<Card> hand) {
+        this.hand = hand;
     }
 
-    public void drawFromGameDeck(int count, Game game) {
-        drawCards(count, game.getDeck());
+    public CardPile getDeck() {
+        return deck;
+    }
+
+    public void setDeck(CardPile deck) {
+        this.deck = deck;
+    }
+
+    public CardPile getDiscardPile() {
+        return discardPile;
+    }
+
+    public void setDiscardPile(CardPile discardPile) {
+        this.discardPile = discardPile;
+    }
+
+    public void changeAttribute(String attribute, Object newValue) {
+        //TODO check if attribute is valid
+        System.out.println(id + " has " + attribute + " changed from " + newValue.toString());
+        this.attributes.put(attribute, newValue);
     }
 
     public void drawCards(int count, CardPile from) {
@@ -57,18 +73,18 @@ public class Player {
             Card card = from.draw();
             if (card != null) {
                 hand.add(card);
-                System.out.println(name + " drew: " + card.getName() + " from " + from.getName());
+                System.out.println(id + " drew: " + card.getName() + " from " + from.getName());
             } else {
-                System.out.println(name + " tried to draw but the" + from.getName() + " is empty.");
+                System.out.println(id + " tried to draw but the" + from.getName() + " is empty.");
             }
         }
-        System.out.println(name + " now has: " + handToString());
+        System.out.println(id + " now has: " + handToString());
     }
 
     public void discardCard(int index, CardPile to) {
         if (index >= 0 && index < hand.size()) {
             Card card = hand.remove(index);
-            System.out.println(name + " discards " + card.getName());
+            System.out.println(id + " discards " + card.getName());
             to.addCard(card);
         } else {
             System.out.println("Invalid card index!");

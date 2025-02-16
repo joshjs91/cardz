@@ -1,6 +1,5 @@
 package cardyb.actions;
 
-import cardyb.games.Game;
 import cardyb.players.Player;
 
 public class ChangePotAction implements GameAction {
@@ -17,6 +16,6 @@ public class ChangePotAction implements GameAction {
     @Override
     public void run(GameActionContext context) {
         Player player = context.getPlayer();
-        player.changePotBy(potAmountToLose);
+        player.changeAttribute(potAmountToLose);
     }
 }
