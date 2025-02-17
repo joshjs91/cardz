@@ -24,7 +24,7 @@ public class GameController {
 
     @PostMapping("/action")
     public GameState performAction(@RequestBody PlayerAction action) {
-        return gameService.performAction(action);
+        return gameService.executeAction(action);
     }
 
     @GetMapping("/state/{gameId}")
@@ -76,7 +76,7 @@ interface CardEffect {
 class DiscardCardEffect implements CardEffect {
     @Override
     public void applyEffect(GameState state, PlayerAction action) {
-        String targetPlayer = (String) action.actionData.get("targetPlayer");
+        String targetPlayer = (String) action.actionData.get("discardCardTargetPlayer");
 
         System.out.println("Player " + targetPlayer + " must discard a card.");
 
@@ -91,10 +91,11 @@ class DiscardCardEffect implements CardEffect {
 class ModifyAttributeEffect implements CardEffect {
     @Override
     public void applyEffect(GameState state, PlayerAction action) {
-        String targetPlayer = (String) action.actionData.get("targetPlayer");
-        String attribute = (String) action.actionData.get("attribute");
-        int valueChange = (int) action.actionData.get("valueChange");
-
+        //TODO in general have lots to do with dealing with duplicate action inputs?????
+        String targetPlayer = (String) action.actionData.get("modifyAttributeTargetPlayer");
+        String attribute = (String) action.actionData.get("attributeToModify");
+        //TODO some form of input as multiple minus plus there is a lot to do here. only handles ints at the moment
+        int valueChange = (int) action.actionData.get("attributeToModifyValue");
         state.gameAttributes.put(attribute, (int) state.gameAttributes.getOrDefault(attribute, 0) + valueChange);
         System.out.println("Player " + targetPlayer + "'s attribute " + attribute + " changed by " + valueChange);
     }
@@ -103,17 +104,33 @@ class ModifyAttributeEffect implements CardEffect {
 class Card {
     public String name;
     public List<CardEffect> effects;
+    public Map<String, Class<?>> requiredInputs;
 
-    public Card(String name, List<CardEffect> effects) {
+    public Card(String name, List<CardEffect> effects, Map<String, Class<?>> requiredInputs) {
         this.name = name;
         this.effects = effects;
+        this.requiredInputs = requiredInputs;
     }
 
     public void applyEffects(GameState state, PlayerAction action) {
+        for (String requiredInputKey : requiredInputs.keySet()) {
+            Object actionInputValue = action.actionData.get(requiredInputKey);
+            if (actionInputValue == null) {
+                throw new RuntimeException("Missing player action input!: " + requiredInputKey);
+            }
+            if (!actionInputValue.getClass().equals(requiredInputs.get(requiredInputKey))) {
+                throw new RuntimeException("invalid user input!: " + requiredInputKey);
+            }
+        }
+
         System.out.println("Player " + action.playerId + " played card: " + name);
         for (CardEffect effect : effects) {
             effect.applyEffect(state, action);
         }
+    }
+
+    public Map<String, Class<?>> getRequiredInputs() {
+        return requiredInputs;
     }
 }
 
@@ -164,7 +181,7 @@ class GameService {
         return drawnCards;
     }
 
-    public GameState performAction(PlayerAction action) {
+    public GameState executeAction(PlayerAction action) {
         GameState state = games.get(action.gameId);
         if (state == null) throw new IllegalArgumentException("Invalid game ID");
 
@@ -173,32 +190,43 @@ class GameService {
         // Validate if action is allowed based on pending actions
         if (!state.pendingActions.isEmpty()) {
             PlayerAction pending = state.pendingActions.peek();
+            System.out.println("sizeeeeee" + state.pendingActions.size());
             if (!pending.playerId.equals(action.playerId) || !pending.actionType.equals(action.actionType)) {
                 throw new IllegalStateException("Action not allowed at this time");
             }
+            executeAction(action, state);
+            state.pendingActions.poll();
+        } else {
+            // Execute the action
+            executeAction(action, state);
+            //TODO presume i should remove this was users available actions here too
         }
 
-        // Execute the action
+
+
+
+
+        return state;
+    }
+
+    private void executeAction(PlayerAction action, GameState state) {
         GameAction gameAction = actionHandlers.get(action.actionType);
         if (gameAction != null) {
             gameAction.execute(state, action);
         } else {
             throw new IllegalStateException("Unknown action type: " + action.actionType);
         }
-
-        // If it was a pending action, remove it now
-        if (!state.pendingActions.isEmpty()) {
-            state.pendingActions.poll();
-        }
-
-        return state;
     }
 
 
     private Map<String, Card> generateDefaultCards() {
         Map<String, Card> defaultCards = new HashMap<>();
-        defaultCards.put("Card1", new Card("Card1", List.of(new DiscardCardEffect(), new ModifyAttributeEffect())));
-        defaultCards.put("SuperDuper", new Card("SuperDuper", List.of(new ModifyAttributeEffect())));
+        //TODO these validations are wrong
+        HashMap<String, Class<?>> cardRequiredInputs = new HashMap<>();
+        cardRequiredInputs.put("discardCardTargetPlayer", String.class);
+        cardRequiredInputs.put("modifyAttributeTargetPlayer", String.class);
+        defaultCards.put("Card1", new Card("Card1", List.of(new DiscardCardEffect(), new ModifyAttributeEffect()), cardRequiredInputs));
+        defaultCards.put("SuperDuper", new Card("SuperDuper", List.of(new ModifyAttributeEffect()), cardRequiredInputs));
         return defaultCards;
     }
 
@@ -227,15 +255,17 @@ class PlayCardAction implements GameAction {
         String cardName = (String) action.actionData.get("cardName");
         List<Card> playerHand = state.playerHands.get(action.playerId);
 
-        if (playerHand != null && playerHand.removeIf(card -> card.name.equals(cardName))) {
+        if (playerHand != null && playerHand.stream().anyMatch(card -> card.name.equals(cardName))) {
             Card card = cards.get(cardName);
             if (card != null) {
                 card.applyEffects(state, action);
+                playerHand.remove(card);
                 state.discardPile.add(card);
             }
         } else {
             throw new IllegalStateException("Player does not have the specified card");
         }
+
     }
 }
 
