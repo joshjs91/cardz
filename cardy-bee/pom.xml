@@ -25,6 +25,14 @@
 			<version>${spring-boot.version}</version> <!-- Use the version defined earlier -->
 		</dependency>
 
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.22</version> <!-- Use the latest version -->
+			<scope>provided</scope>
+		</dependency>
+
+
 		<!-- Spring Boot Test Dependency -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
