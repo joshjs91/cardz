@@ -37,19 +37,27 @@ class GameService {
 
     public GameState startGame(GameSetupRequest request) {
         String gameId = UUID.randomUUID().toString();
-        GameState state = new GameState();
-        state.setGameId(gameId);
-        state.setPlayers(request.getPlayerIds());
-        state.setCurrentPlayer(request.getPlayerIds().get(0));
-        state.setGameAttributes(new HashMap<>());
-        state.setPlayerAvailableActions(new HashMap<>());
-        state.setDrawDeck(new ArrayList<>(generateDeck()));
-        state.setDiscardPile(new ArrayList<>());
-        state.setPlayerHands(new HashMap<>());
+        List<String> playerIds = request.getPlayerIds();
+        String currentPlayer = playerIds.get(0);
+        HashMap<String, Object> gameAttributes = new HashMap<>();
+        HashMap<String, List<PlayerAction>> playerAvailableActions = new HashMap<>();
+        LinkedList<PendingAction> pendingActions = new LinkedList<>();
+        ArrayList<Card> drawDeck = new ArrayList<>(generateDeck());
+        ArrayList<Card> discardPile = new ArrayList<>();
+        HashMap<String, List<Card>> playerHands = new HashMap<>();
+        GameState state = new GameState(
+                gameId,
+                playerIds,
+                currentPlayer,
+                gameAttributes,
+                playerAvailableActions,
+                pendingActions,
+                drawDeck,
+                discardPile,
+                playerHands
+        );
 
-        //TODO this needs to change to just be the default new turn actions opposed to all actions
-
-        for (String player : request.getPlayerIds()) {
+        for (String player : playerIds) {
             state.getPlayerHands().put(player, drawCards(state.getDrawDeck(), 5));
             if (player == state.getCurrentPlayer()) {
                 state.getPlayerAvailableActions().put(state.getCurrentPlayer(), actions.values().stream().toList());
