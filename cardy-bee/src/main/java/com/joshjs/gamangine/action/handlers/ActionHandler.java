@@ -2,6 +2,7 @@ package com.joshjs.gamangine.action.handlers;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.card.DiscardCardEffect;
 import com.joshjs.gamangine.card.ModifyAttributeEffect;
 import com.joshjs.gamangine.model.state.GameState;

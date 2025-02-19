@@ -15,8 +15,10 @@ import static com.joshjs.gamangine.validator.UserInputValidator.verifyUserInput;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Card {
+    //TODO make private
     public String name;
     public List<CardEffect> effects;
+    //TODO these should be moved into the effects as attributes on the effect as
     public Map<String, Class<?>> requiredInputs;
 
     public void applyEffects(GameState state, PlayerActionRequest action) {

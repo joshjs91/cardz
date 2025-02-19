@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@JsonTypeName("EndTurnActionHandler")
 public class EndTurnActionHandler implements ActionHandler {
 
     @Override
@@ -25,7 +26,12 @@ public class EndTurnActionHandler implements ActionHandler {
             state.setCurrentPlayer(state.getPlayers().get((currentIndex + 1) % state.getPlayers().size()));
 
             // Assign available actions for the new player
-            state.getPlayerAvailableActions().put(state.getCurrentPlayer(), List.of(new PlayerAction("its your turn now do_something", new HashMap<>(), new ArrayList<>())));
+            //TODO there should be a default set of actions somewhere the the turn ends
+            List<PlayerAction> newActions = List.of(
+                    new PlayerAction("play_card", new HashMap<>(), List.of(new PlayCardActionHandler())),
+                    new PlayerAction("end_turn", new HashMap<>(), List.of(new EndTurnActionHandler()))
+            );
+            state.getPlayerAvailableActions().put(state.getCurrentPlayer(), newActions);
             System.out.println("Turn changed to player: " + state.getCurrentPlayer());
         }
     }

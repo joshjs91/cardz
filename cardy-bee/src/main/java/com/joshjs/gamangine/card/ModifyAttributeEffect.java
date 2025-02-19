@@ -1,9 +1,14 @@
 package com.joshjs.gamangine.card;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.model.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 
+@JsonTypeName("ModifyAttributeEffect")
 public class ModifyAttributeEffect implements CardEffect {
+
+
+
     @Override
     public void applyEffect(GameState state, PlayerActionRequest action) {
         //TODO in general have lots to do with dealing with duplicate action inputs?????
@@ -14,6 +19,4 @@ public class ModifyAttributeEffect implements CardEffect {
         state.getGameAttributes().put(attribute, (int) state.getGameAttributes().getOrDefault(attribute, 0) + valueChange);
         System.out.println("Player " + targetPlayer + "'s attribute " + attribute + " changed by " + valueChange);
     }
-
-
 }

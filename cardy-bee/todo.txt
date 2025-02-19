@@ -1,0 +1,12 @@
+Games to handle:
+- Skull
+- snap
+- no thanks
+
+Features:
+
+
+- resolve the game ending as an attribute - done
+- handle cards only visible to certain users - todo
+- make it so that the card is provided as an attribute of an action opposed to just a random attribute i need to validate - todo
+- make it so for discard card effect, it allows you to provide how many cards are discarded. - todo

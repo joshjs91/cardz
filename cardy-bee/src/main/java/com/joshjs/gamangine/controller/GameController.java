@@ -1,10 +1,16 @@
 package com.joshjs.gamangine.controller;
 
+import com.joshjs.gamangine.condition.CardsAllPlayedCondition;
+import com.joshjs.gamangine.condition.Condition;
+import com.joshjs.gamangine.condition.GameNumberAttributeCondition;
 import com.joshjs.gamangine.model.PlayerActionRequest;
 import com.joshjs.gamangine.model.GameSetupRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import com.joshjs.gamangine.service.GameService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/game")
@@ -21,6 +27,11 @@ public class GameController {
         return gameService.startGame(request);
     }
 
+    @GetMapping("/conditions")
+    public List<Condition> performAction() {
+        return List.of(new CardsAllPlayedCondition(), new GameNumberAttributeCondition());
+    }
+
     @PostMapping("/action")
     public GameState performAction(@RequestBody PlayerActionRequest action) {
         return gameService.executeAction(action);
@@ -31,9 +42,5 @@ public class GameController {
         return gameService.getGameState(gameId);
     }
 
-    @GetMapping("/")
-    public String home() {
-        return "Greetings!";
-    }
 }
 

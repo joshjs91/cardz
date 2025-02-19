@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.joshjs.gamangine.action.PendingAction;
 import com.joshjs.gamangine.action.PlayerAction;
 import com.joshjs.gamangine.card.Card;
+import com.joshjs.gamangine.condition.Condition;
 import com.joshjs.gamangine.model.PlayerActionRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,4 +27,10 @@ public class GameState {
     private List<Card> drawDeck;
     private List<Card> discardPile;
     private Map<String, List<Card>> playerHands;
+
+    private Condition gameEndedCondition;
+
+    public boolean isGameEnded() {
+        return gameEndedCondition.evaluate(this);
+    }
 }

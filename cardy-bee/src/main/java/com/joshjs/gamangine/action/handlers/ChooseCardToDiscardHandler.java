@@ -1,5 +1,6 @@
 package com.joshjs.gamangine.action.handlers;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.model.PlayerActionRequest;
@@ -8,6 +9,8 @@ import com.joshjs.gamangine.model.state.GameState;
 import java.util.List;
 import java.util.function.Predicate;
 
+
+@JsonTypeName("ChooseCardToDiscardHandler")
 public class ChooseCardToDiscardHandler implements ActionHandler {
 
     @Override

@@ -4,6 +4,7 @@ import com.joshjs.gamangine.action.*;
 import com.joshjs.gamangine.action.handlers.ChooseCardToDiscardHandler;
 import com.joshjs.gamangine.action.handlers.EndTurnActionHandler;
 import com.joshjs.gamangine.action.handlers.PlayCardActionHandler;
+import com.joshjs.gamangine.condition.CardsAllPlayedCondition;
 import com.joshjs.gamangine.model.PlayerActionRequest;
 import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.card.DiscardCardEffect;
@@ -54,7 +55,8 @@ class GameService {
                 pendingActions,
                 drawDeck,
                 discardPile,
-                playerHands
+                playerHands,
+                request.getGameEndingCondition()
         );
 
         for (String player : playerIds) {
@@ -96,7 +98,6 @@ class GameService {
         } else {
             // Execute the action
             executeAction(state, action);
-            //TODO presume i should remove this was users available actions here too
         }
 
 
@@ -105,6 +106,10 @@ class GameService {
 
     private void executeAction(GameState state, PlayerActionRequest action) {
         // Find the first available action that matches the action type
+        //This just needs to check its the actual players turn
+        if (!state.getCurrentPlayer().equals(action.playerId)) {
+            throw new IllegalStateException("Its not your turn you FOOL");
+        }
         Optional<PlayerAction> availableAction = state.getPlayerAvailableActions().get(action.playerId)
                 .stream()
                 .filter(availablePlayerAction -> availablePlayerAction.actionType.equals(action.actionType))
@@ -129,11 +134,20 @@ class GameService {
         }
     }
 
-
+//TODO turn into a factory
     private Map<String, Card> generateDefaultCards() {
         Map<String, Card> defaultCards = new HashMap<>();
+        Map<String, Class<?>> cardRequiredInputs = new HashMap<>();
+        defaultCards.put("Card1", new Card("Card1", List.of(), cardRequiredInputs));
+        defaultCards.put("SuperDuper", new Card("SuperDuper", List.of(), cardRequiredInputs));
+        defaultCards.put("SuperDuper pooper", new Card("SuperDuper", List.of(), cardRequiredInputs));
+        return defaultCards;
+    }
+
+    private Map<String, Card> generateComplexCards() {
+        Map<String, Card> defaultCards = new HashMap<>();
         //TODO these validations are wrong
-        HashMap<String, Class<?>> cardRequiredInputs = new HashMap<>();
+        Map<String, Class<?>> cardRequiredInputs = new HashMap<>();
         cardRequiredInputs.put("discardCardTargetPlayer", String.class);
         cardRequiredInputs.put("modifyAttributeTargetPlayer", String.class);
         defaultCards.put("Card1", new Card("Card1", List.of(new DiscardCardEffect(), new ModifyAttributeEffect()), cardRequiredInputs));
