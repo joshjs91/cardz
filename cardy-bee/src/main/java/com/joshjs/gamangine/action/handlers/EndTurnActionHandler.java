@@ -3,9 +3,8 @@ package com.joshjs.gamangine.action.handlers;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.action.PlayerAction;
 import com.joshjs.gamangine.model.state.GameState;
-import com.joshjs.gamangine.model.PlayerActionRequest;
+import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 

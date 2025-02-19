@@ -4,12 +4,13 @@ import com.joshjs.gamangine.action.*;
 import com.joshjs.gamangine.action.handlers.ChooseCardToDiscardHandler;
 import com.joshjs.gamangine.action.handlers.EndTurnActionHandler;
 import com.joshjs.gamangine.action.handlers.PlayCardActionHandler;
-import com.joshjs.gamangine.condition.CardsAllPlayedCondition;
-import com.joshjs.gamangine.model.PlayerActionRequest;
+import com.joshjs.gamangine.model.dto.GameStateDTO;
+import com.joshjs.gamangine.model.dto.PlayerActionRequest;
+import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.card.DiscardCardEffect;
 import com.joshjs.gamangine.card.ModifyAttributeEffect;
-import com.joshjs.gamangine.model.GameSetupRequest;
+import com.joshjs.gamangine.model.dto.GameSetupRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import org.springframework.stereotype.Service;
 

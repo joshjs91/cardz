@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.action.PendingAction;
 import com.joshjs.gamangine.action.handlers.ChooseCardToDiscardHandler;
 import com.joshjs.gamangine.action.PlayerAction;
-import com.joshjs.gamangine.model.PlayerActionRequest;
+import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 
 import java.util.HashMap;

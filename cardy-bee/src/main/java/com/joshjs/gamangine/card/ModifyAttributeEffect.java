@@ -1,7 +1,7 @@
 package com.joshjs.gamangine.card;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.joshjs.gamangine.model.PlayerActionRequest;
+import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 
 @JsonTypeName("ModifyAttributeEffect")

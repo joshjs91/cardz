@@ -1,4 +1,4 @@
-package com.joshjs.gamangine.model;
+package com.joshjs.gamangine.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

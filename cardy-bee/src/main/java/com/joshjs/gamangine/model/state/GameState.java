@@ -1,12 +1,9 @@
 package com.joshjs.gamangine.model.state;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.joshjs.gamangine.action.PendingAction;
 import com.joshjs.gamangine.action.PlayerAction;
 import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.condition.Condition;
-import com.joshjs.gamangine.model.PlayerActionRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +11,6 @@ import lombok.NoArgsConstructor;
 import java.util.*;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class GameState {
     private String gameId;
@@ -31,6 +27,6 @@ public class GameState {
     private Condition gameEndedCondition;
 
     public boolean isGameEnded() {
-        return gameEndedCondition.evaluate(this);
+        return gameEndedCondition != null && gameEndedCondition.evaluate(this);
     }
 }

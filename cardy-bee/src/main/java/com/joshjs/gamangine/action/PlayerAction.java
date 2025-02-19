@@ -1,7 +1,8 @@
 package com.joshjs.gamangine.action;
 
 import com.joshjs.gamangine.action.handlers.ActionHandler;
-import com.joshjs.gamangine.model.PlayerActionRequest;
+import com.joshjs.gamangine.model.dto.PlayerActionRequest;
+import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import lombok.AllArgsConstructor;
 import lombok.Data;

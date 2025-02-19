@@ -1,6 +1,7 @@
 package com.joshjs.gamangine.card;
 
-import com.joshjs.gamangine.model.PlayerActionRequest;
+import com.joshjs.gamangine.model.dto.PlayerActionRequest;
+import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,14 +17,13 @@ import static com.joshjs.gamangine.validator.UserInputValidator.verifyUserInput;
 @AllArgsConstructor
 public class Card {
     //TODO make private
-    public String name;
-    public List<CardEffect> effects;
+    private String name;
+    private List<CardEffect> effects;
     //TODO these should be moved into the effects as attributes on the effect as
-    public Map<String, Class<?>> requiredInputs;
+    private Map<String, Class<?>> requiredInputs;
 
     public void applyEffects(GameState state, PlayerActionRequest action) {
         //TODO this should be moved inside the effects
-
         verifyUserInput(requiredInputs, action);
         System.out.println("Player " + action.playerId + " played card: " + name);
         for (CardEffect effect : effects) {

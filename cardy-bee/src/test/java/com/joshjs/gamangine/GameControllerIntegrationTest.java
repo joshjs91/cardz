@@ -3,8 +3,8 @@ package com.joshjs.gamangine;
 import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.condition.CardsAllPlayedCondition;
 import com.joshjs.gamangine.condition.Condition;
-import com.joshjs.gamangine.model.GameSetupRequest;
-import com.joshjs.gamangine.model.PlayerActionRequest;
+import com.joshjs.gamangine.model.dto.GameSetupRequest;
+import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +33,7 @@ public class GameControllerIntegrationTest {
         for (String player : gameState.getPlayerHands().keySet()) {
             for (Card card : gameState.getPlayerHands().get(player)) {
                 Map<String, Object> actionData = new HashMap<>();
-                actionData.put("cardName", card.name);
+                actionData.put("cardName", card.getName());
                 runAction(gameState.getGameId(), player, "play_card", actionData);
                 runAction(gameState.getGameId(), player, "end_turn", actionData);
             }

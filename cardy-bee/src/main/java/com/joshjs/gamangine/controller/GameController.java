@@ -3,13 +3,13 @@ package com.joshjs.gamangine.controller;
 import com.joshjs.gamangine.condition.CardsAllPlayedCondition;
 import com.joshjs.gamangine.condition.Condition;
 import com.joshjs.gamangine.condition.GameNumberAttributeCondition;
-import com.joshjs.gamangine.model.PlayerActionRequest;
-import com.joshjs.gamangine.model.GameSetupRequest;
+import com.joshjs.gamangine.model.dto.GameSetupRequest;
+import com.joshjs.gamangine.model.dto.GameStateDTO;
+import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import com.joshjs.gamangine.service.GameService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController

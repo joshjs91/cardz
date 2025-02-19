@@ -1,6 +1,6 @@
 package com.joshjs.gamangine.validator;
 
-import com.joshjs.gamangine.model.PlayerActionRequest;
+import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 
 import java.util.Map;
 

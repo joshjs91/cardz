@@ -1,9 +1,8 @@
 package com.joshjs.gamangine.action.handlers;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.card.Card;
-import com.joshjs.gamangine.model.PlayerActionRequest;
+import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 
 import java.util.List;
@@ -17,7 +16,7 @@ public class ChooseCardToDiscardHandler implements ActionHandler {
     public void execute(GameState state, PlayerActionRequest action) {
         String cardName = (String) action.actionData.get("cardName");
         List<Card> playerHand = state.getPlayerHands().get(action.playerId);
-        Card discardedCard = removeIf(playerHand, card -> card.name.equals(cardName));
+        Card discardedCard = removeIf(playerHand, card -> card.getName().equals(cardName));
         state.getDiscardPile().add(discardedCard);
     }
 
