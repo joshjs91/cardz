@@ -11,11 +11,10 @@ import java.util.Map;
 
 import static com.joshjs.gamangine.validator.UserInputValidator.getNewIntValue;
 
-@JsonTypeName("ModifyGameAttributeEffect")
+@JsonTypeName("ModifyPlayerNumberAttributeEffect")
 @Data
-public class ModifyGameNumberAttributeEffect implements CardEffect {
+public class ModifyPlayerNumberAttributeEffect implements CardEffect {
 
-    //TODO these attributes this can be put into an abstract class?
     @JsonProperty("modificationValue")
     private Integer modificationValue;
 
@@ -25,6 +24,9 @@ public class ModifyGameNumberAttributeEffect implements CardEffect {
     @JsonProperty("attribute")
     private String attribute;
 
+    @JsonProperty("targetPlayer")
+    private String targetPlayer;
+
     @Override
     public Map<String, String> getRequiredInputs() {
         HashMap<String, String> requiredInputs = new HashMap<>();
@@ -32,16 +34,21 @@ public class ModifyGameNumberAttributeEffect implements CardEffect {
         //TODO deal with some set of values somewhere?
         requiredInputs.put("calculationType", "SOME_SET_OF_VALUES");
         requiredInputs.put("modificationValue", "Integer");
+        requiredInputs.put("targetPlayer", "String");
         return requiredInputs;
     }
 
     @Override
     public void applyEffect(GameState state, PlayerActionRequest action) {
-        //TODO need to deal with the game attribute not existing here or not being an Integer
-        Integer currentValue = (Integer) state.getGameAttributes().get(attribute);
+        Map<String, Object> targetPlayerAttributes = state.getPlayerAttributes().get(targetPlayer);
+        if (targetPlayer == null || targetPlayerAttributes == null) {
+            throw new IllegalArgumentException("Invalid target player: " + targetPlayer);
+        }
+        Integer currentValue = (Integer) targetPlayerAttributes.get(attribute);
+        if (currentValue == null) {
+            throw new IllegalArgumentException("Invalid player attribute to modify: " + targetPlayer);
+        }
         Integer newValue = getNewIntValue(currentValue, calculationType, modificationValue);
-        state.getGameAttributes().put(attribute,  + newValue);
+        state.getGameAttributes().put(attribute, newValue);
     }
-
-
 }

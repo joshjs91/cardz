@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,16 +30,16 @@ public class GameControllerIntegrationTest {
 	private TestRestTemplate template;
 
     @Test
-    public void testBasicGameFlow() throws Exception {
+    public void testBasicGameFlow() {
         GameState gameState = startNewGame(List.of("player1"), new CardsAllPlayedCondition());
         assertThat(gameState.getGameId()).isNotNull();
         //TODO convert action type to be an actual object to provide input
         for (String player : gameState.getPlayerHands().keySet()) {
             for (Card card : gameState.getPlayerHands().get(player)) {
-                Map<String, Object> actionData = new HashMap<>();
-                actionData.put("cardName", card.getName());
-                runAction(gameState.getGameId(), player, new PlayCardAction(), actionData);
-                runAction(gameState.getGameId(), player, new EndTurnAction(), actionData);
+                PlayCardAction action = new PlayCardAction();
+                action.setCardName(card.getName());
+                runAction(gameState.getGameId(), player, action);
+                runAction(gameState.getGameId(), player, new EndTurnAction());
             }
         }
         GameState finalGameState = getGame(gameState.getGameId());
@@ -71,12 +72,12 @@ public class GameControllerIntegrationTest {
         return response.getBody();
     }
 
-    private GameState runAction(String gameId, String player, Action action, Map<String, Object> actionData) {
+    private GameState runAction(String gameId, String player, Action action) {
         // Create headers to set the Content-Type
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<PlayerActionRequest> playerActionRequest = new HttpEntity<>(new PlayerActionRequest(gameId, player, action, actionData), headers);
+        HttpEntity<PlayerActionRequest> playerActionRequest = new HttpEntity<>(new PlayerActionRequest(gameId, player, action), headers);
 
         // Perform a POST request with the appropriate headers
         ResponseEntity<GameState> response = template.exchange("/game/action", HttpMethod.POST, playerActionRequest, GameState.class);

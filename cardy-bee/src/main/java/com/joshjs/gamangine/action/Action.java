@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.joshjs.gamangine.model.state.GameState;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 
+import java.util.Map;
+
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
@@ -17,4 +19,5 @@ import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 })
 public interface Action {
     void execute(GameState state, PlayerActionRequest action);
+    Map<String, String> getRequiredInputs();
 }

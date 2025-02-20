@@ -3,19 +3,33 @@ package com.joshjs.gamangine.condition;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.model.state.GameState;
+import lombok.Data;
 
-//TODO this can be the same pattern for card effects??????? i.e. it deserlizes with the value of the variable and can be saved as state....
+import java.util.HashMap;
+import java.util.Map;
+
 @JsonTypeName("GameNumberAttributeCondition")
+@Data
 public class GameNumberAttributeCondition implements Condition {
 
-    @JsonProperty("attributeValue")
-    private Integer attributeValue;
+    @JsonProperty("modificationValue")
+    private Integer modificationValue;
 
     @JsonProperty("calculationType")
     private String calculationType;
 
     @JsonProperty("attribute")
     private String attribute;
+
+    @Override
+    public Map<String, String> getRequiredInputs() {
+        HashMap<String, String> requiredInputs = new HashMap<>();
+        requiredInputs.put("attributeValue", "Integer");
+        //TODO deal with some set of values somewhere?
+        requiredInputs.put("calculationType", "SOME_SET_OF_VALUES");
+        requiredInputs.put("attribute", "String");
+        return requiredInputs;
+    }
 
     @Override
     public boolean evaluate(GameState state) {
@@ -28,9 +42,9 @@ public class GameNumberAttributeCondition implements Condition {
         }
 
         return switch (calculationType.toLowerCase()) {
-            case "greaterthan" -> gameAttributeValue > attributeValue;
-            case "lessthan" -> gameAttributeValue < attributeValue;
-            case "equals" -> gameAttributeValue == attributeValue;
+            case "greaterthan" -> gameAttributeValue > modificationValue;
+            case "lessthan" -> gameAttributeValue < modificationValue;
+            case "equals" -> gameAttributeValue == modificationValue;
             default -> throw new IllegalArgumentException("Invalid calculation type: " + calculationType);
         };
     }

@@ -41,16 +41,18 @@ class GameService {
         List<String> playerIds = request.getPlayerIds();
         String currentPlayer = playerIds.get(0);
         Map<String, Object> gameAttributes = request.getGameAttributes();
-        HashMap<String, List<Action>> playerAvailableActions = new HashMap<>();
+        Map<String, List<Action>> playerAvailableActions = new HashMap<>();
         LinkedList<PendingAction> pendingActions = new LinkedList<>();
 
         List<Card> deck = generateDeck(request.getDeckType());
         ArrayList<Card> drawDeck = new ArrayList<>(deck);
         ArrayList<Card> discardPile = new ArrayList<>();
         HashMap<String, List<Card>> playerHands = new HashMap<>();
+        HashMap<String, Map<String, Object>> playerAttributes = new HashMap<>();
         GameState state = new GameState(
                 gameId,
                 playerIds,
+                playerAttributes,
                 currentPlayer,
                 gameAttributes,
                 playerAvailableActions,
@@ -112,39 +114,43 @@ class GameService {
         if (!state.getCurrentPlayer().equals(actionRequest.playerId)) {
             throw new IllegalStateException("Its not your turn you FOOL");
         }
-        Optional<Action> availableAction = state.getPlayerAvailableActions().get(actionRequest.playerId)
-                .stream()
-                .filter(availablePlayerAction -> availablePlayerAction.getClass().equals(actionRequest.getAction().getClass()))
-                .findFirst();
 
-        if (availableAction.isPresent()) {
-            Action actionToExecute = availableAction.get();
-            actionToExecute.execute(state, actionRequest);
+        if (actionAllowed(state, actionRequest)) {
+            actionRequest.action.execute(state, actionRequest);
 
-            // Remove the first instance of the action from the list
-            List<Action> playerActions = state.getPlayerAvailableActions().get(actionRequest.playerId);
-
-            // Create a new list excluding the first matching action
-            List<Action> updatedActions = playerActions.stream()
-                    .filter(playerAction -> !playerAction.getClass().equals(actionToExecute.getClass()) || playerActions.indexOf(playerAction) != playerActions.indexOf(actionToExecute))
-                    .collect(Collectors.toList());
-
-            // Update the player's available actions in the state
+            // Update the player's available actions in the state by creating a new list so that its mutable for some fucking reason
+            List<Action> updatedActions = new ArrayList<>(state.getPlayerAvailableActions().get(actionRequest.playerId));
+            updatedActions.remove(nextActionOfType(state,actionRequest));
             state.getPlayerAvailableActions().put(actionRequest.playerId, updatedActions);
         } else {
             throw new IllegalStateException("Player action not available: " + actionRequest.action);
         }
     }
 
-//TODO turn into a factory
+    private Boolean actionAllowed(GameState state, PlayerActionRequest actionRequest) {
+        return state.getPlayerAvailableActions().get(actionRequest.playerId)
+                .stream()
+                .anyMatch(availablePlayerAction -> availablePlayerAction.getClass().equals(actionRequest.getAction().getClass()));
+    }
+
+    private Action nextActionOfType(GameState state, PlayerActionRequest actionRequest) {
+        return state.getPlayerAvailableActions().get(actionRequest.playerId)
+                .stream()
+                .filter(availablePlayerAction -> availablePlayerAction.getClass().equals(actionRequest.getAction().getClass()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Should never get here... action has run and being removed from usable actions"));
+    }
+
+
+    //TODO turn into a factory
     private Map<String, Card> generateDefaultCards() {
         Map<String, Card> defaultCards = new HashMap<>();
         Map<String, Class<?>> cardRequiredInputs = new HashMap<>();
-        defaultCards.put("Remove tokens", new Card("Remove tokens", List.of(new ModifyGameNumberAttributeEffect()), cardRequiredInputs));
-        defaultCards.put("Card1", new Card("Card1", List.of(), cardRequiredInputs));
-        defaultCards.put("SuperDuper", new Card("SuperDuper", List.of(), cardRequiredInputs));
-        defaultCards.put("SuperDuper pooper", new Card("SuperDuper", List.of(), cardRequiredInputs));
-        defaultCards.put("No effects", new Card("No effects", List.of(), cardRequiredInputs));
+        defaultCards.put("Remove tokens", new Card("Remove tokens", List.of(new ModifyGameNumberAttributeEffect())));
+        defaultCards.put("Card1", new Card("Card1", List.of()));
+        defaultCards.put("SuperDuper", new Card("SuperDuper", List.of()));
+        defaultCards.put("SuperDuper pooper", new Card("SuperDuper", List.of()));
+        defaultCards.put("No effects", new Card("No effects", List.of()));
         return defaultCards;
     }
 
@@ -154,8 +160,8 @@ class GameService {
         Map<String, Class<?>> cardRequiredInputs = new HashMap<>();
         cardRequiredInputs.put("discardCardTargetPlayer", String.class);
         cardRequiredInputs.put("modifyAttributeTargetPlayer", String.class);
-        defaultCards.put("Card1", new Card("Card1", List.of(new DiscardCardEffect(), new ModifyGameNumberAttributeEffect()), cardRequiredInputs));
-        defaultCards.put("SuperDuper", new Card("SuperDuper", List.of(new ModifyGameNumberAttributeEffect()), cardRequiredInputs));
+        defaultCards.put("Card1", new Card("Card1", List.of(new DiscardCardEffect(), new ModifyGameNumberAttributeEffect())));
+        defaultCards.put("SuperDuper", new Card("SuperDuper", List.of(new ModifyGameNumberAttributeEffect())));
         return defaultCards;
     }
 

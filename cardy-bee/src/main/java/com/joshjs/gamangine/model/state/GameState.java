@@ -1,5 +1,6 @@
 package com.joshjs.gamangine.model.state;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.joshjs.gamangine.action.model.PendingAction;
 import com.joshjs.gamangine.action.Action;
 import com.joshjs.gamangine.card.Card;
@@ -15,10 +16,12 @@ import java.util.*;
 @AllArgsConstructor
 public class GameState {
     private String gameId;
+    //TODO maybe i do need a player class
     private List<String> players;
+    private Map<String, Map<String, Object>> playerAttributes;
     private String currentPlayer;
     private Map<String, Object> gameAttributes;
-    private Map<String, List<Action>> playerAvailableActions;
+    private Map<String, List<Action>> playerAvailableActions= new HashMap<>();;
     private Queue<PendingAction> pendingActions;
 
     private List<Card> drawDeck;

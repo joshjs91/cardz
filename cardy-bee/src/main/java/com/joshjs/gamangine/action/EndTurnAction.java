@@ -3,10 +3,14 @@ package com.joshjs.gamangine.action;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.model.state.GameState;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
+import lombok.Data;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @JsonTypeName("EndTurnAction")
+@Data
 public class EndTurnAction implements Action {
 
     @Override
@@ -15,6 +19,11 @@ public class EndTurnAction implements Action {
             throw new IllegalStateException("Only the current player can end their turn");
         }
         updateTurn(state);
+    }
+
+    @Override
+    public Map<String, String> getRequiredInputs() {
+        return new HashMap<>();
     }
 
     private void updateTurn(GameState state) {
