@@ -1,6 +1,6 @@
 package com.joshjs.gamangine.card;
 
-import com.joshjs.gamangine.model.dto.PlayerActionRequest;
+import com.joshjs.gamangine.card.effects.CardEffect;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import lombok.AllArgsConstructor;

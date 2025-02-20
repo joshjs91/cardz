@@ -1,4 +1,4 @@
-package com.joshjs.gamangine.card;
+package com.joshjs.gamangine.card.effects;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -10,6 +10,6 @@ import com.joshjs.gamangine.model.state.GameState;
         @JsonSubTypes.Type(value = DiscardCardEffect.class, name = "DiscardCardEffect"),
         @JsonSubTypes.Type(value = ModifyGameNumberAttributeEffect.class, name = "ModifyGameAttributeEffect")
 })
-interface CardEffect {
+public interface CardEffect {
     void applyEffect(GameState state, PlayerActionRequest action);
 }

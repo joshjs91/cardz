@@ -1,4 +1,4 @@
-package com.joshjs.gamangine.card;
+package com.joshjs.gamangine.card.effects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;

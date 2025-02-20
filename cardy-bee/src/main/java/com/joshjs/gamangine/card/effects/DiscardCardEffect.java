@@ -1,4 +1,4 @@
-package com.joshjs.gamangine.card;
+package com.joshjs.gamangine.card.effects;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.action.model.PendingAction;
