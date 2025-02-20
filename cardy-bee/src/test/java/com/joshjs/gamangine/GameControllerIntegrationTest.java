@@ -1,5 +1,8 @@
 package com.joshjs.gamangine;
 
+import com.joshjs.gamangine.action.Action;
+import com.joshjs.gamangine.action.EndTurnAction;
+import com.joshjs.gamangine.action.PlayCardAction;
 import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.condition.CardsAllPlayedCondition;
 import com.joshjs.gamangine.condition.Condition;
@@ -34,8 +37,8 @@ public class GameControllerIntegrationTest {
             for (Card card : gameState.getPlayerHands().get(player)) {
                 Map<String, Object> actionData = new HashMap<>();
                 actionData.put("cardName", card.getName());
-                runAction(gameState.getGameId(), player, "play_card", actionData);
-                runAction(gameState.getGameId(), player, "end_turn", actionData);
+                runAction(gameState.getGameId(), player, new PlayCardAction(), actionData);
+                runAction(gameState.getGameId(), player, new EndTurnAction(), actionData);
             }
         }
         GameState finalGameState = getGame(gameState.getGameId());
@@ -68,12 +71,12 @@ public class GameControllerIntegrationTest {
         return response.getBody();
     }
 
-    private GameState runAction(String gameId, String player, String actionType, Map<String, Object> actionData) {
+    private GameState runAction(String gameId, String player, Action action, Map<String, Object> actionData) {
         // Create headers to set the Content-Type
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<PlayerActionRequest> playerActionRequest = new HttpEntity<>(new PlayerActionRequest(gameId, player, actionType, actionData), headers);
+        HttpEntity<PlayerActionRequest> playerActionRequest = new HttpEntity<>(new PlayerActionRequest(gameId, player, action, actionData), headers);
 
         // Perform a POST request with the appropriate headers
         ResponseEntity<GameState> response = template.exchange("/game/action", HttpMethod.POST, playerActionRequest, GameState.class);

@@ -1,15 +1,13 @@
-package com.joshjs.gamangine.action.handlers;
+package com.joshjs.gamangine.action;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.joshjs.gamangine.action.PlayerAction;
 import com.joshjs.gamangine.model.state.GameState;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 
-import java.util.HashMap;
 import java.util.List;
 
 @JsonTypeName("EndTurnActionHandler")
-public class EndTurnActionHandler implements ActionHandler {
+public class EndTurnAction implements Action {
 
     @Override
     public void execute(GameState state, PlayerActionRequest action) {
@@ -26,10 +24,7 @@ public class EndTurnActionHandler implements ActionHandler {
 
             // Assign available actions for the new player
             //TODO there should be a default set of actions somewhere the the turn ends
-            List<PlayerAction> newActions = List.of(
-                    new PlayerAction("play_card", new PlayCardActionHandler()),
-                    new PlayerAction("end_turn", new EndTurnActionHandler())
-            );
+            List<Action> newActions = List.of(new PlayCardAction(), new EndTurnAction());
             state.getPlayerAvailableActions().put(state.getCurrentPlayer(), newActions);
             System.out.println("Turn changed to player: " + state.getCurrentPlayer());
         }

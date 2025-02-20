@@ -1,4 +1,4 @@
-package com.joshjs.gamangine.action.handlers;
+package com.joshjs.gamangine.action;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.card.Card;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @JsonTypeName("PlayCardActionHandler")
-public class PlayCardActionHandler implements ActionHandler {
+public class PlayCardAction implements Action {
 
     @Override
     public void execute(GameState state, PlayerActionRequest action) {

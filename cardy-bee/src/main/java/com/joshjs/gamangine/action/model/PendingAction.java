@@ -1,12 +1,12 @@
-package com.joshjs.gamangine.action;
+package com.joshjs.gamangine.action.model;
 
+import com.joshjs.gamangine.action.Action;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 public class PendingAction {
     private String player;
-    private PlayerAction action;
+    private Action action;
 }

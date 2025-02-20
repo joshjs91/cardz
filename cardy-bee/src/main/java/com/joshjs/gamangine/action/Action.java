@@ -1,4 +1,4 @@
-package com.joshjs.gamangine.action.handlers;
+package com.joshjs.gamangine.action;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -11,10 +11,10 @@ import com.joshjs.gamangine.model.dto.PlayerActionRequest;
         property = "type"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = PlayCardActionHandler.class, name = "PlayCardActionHandler"),
-        @JsonSubTypes.Type(value = ChooseCardToDiscardHandler.class, name = "ChooseCardToDiscardHandler"),
-        @JsonSubTypes.Type(value = EndTurnActionHandler.class, name = "EndTurnActionHandler"),
+        @JsonSubTypes.Type(value = PlayCardAction.class, name = "PlayCardActionHandler"),
+        @JsonSubTypes.Type(value = ChooseCardToDiscard.class, name = "ChooseCardToDiscardHandler"),
+        @JsonSubTypes.Type(value = EndTurnAction.class, name = "EndTurnActionHandler"),
 })
-public interface ActionHandler {
+public interface Action {
     void execute(GameState state, PlayerActionRequest action);
 }

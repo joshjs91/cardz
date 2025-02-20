@@ -1,9 +1,10 @@
 package com.joshjs.gamangine.service;
 
-import com.joshjs.gamangine.action.*;
-import com.joshjs.gamangine.action.handlers.ChooseCardToDiscardHandler;
-import com.joshjs.gamangine.action.handlers.EndTurnActionHandler;
-import com.joshjs.gamangine.action.handlers.PlayCardActionHandler;
+import com.joshjs.gamangine.action.Action;
+import com.joshjs.gamangine.action.ChooseCardToDiscard;
+import com.joshjs.gamangine.action.EndTurnAction;
+import com.joshjs.gamangine.action.PlayCardAction;
+import com.joshjs.gamangine.action.model.PendingAction;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.card.DiscardCardEffect;
@@ -21,15 +22,15 @@ class GameService {
     //These are all repositories of sorts
     private final Map<String, GameState> games = new HashMap<>();
     private final Map<String, Card> cards;
-    private final Map<String, PlayerAction> actions;
+    private final Map<String, Action> actions;
     //TODO is there a list of allowed actions here too?
 
     public GameService() {
         this.cards = generateDefaultCards();
         this.actions = new HashMap<>();
-        PlayerAction play_card = new PlayerAction("play_card", new PlayCardActionHandler());
-        PlayerAction choose_discard = new PlayerAction("choose_discard", new ChooseCardToDiscardHandler());
-        PlayerAction end_turn = new PlayerAction("end_turn", new EndTurnActionHandler());
+        Action play_card = new PlayCardAction();
+        Action choose_discard = new ChooseCardToDiscard();
+        Action end_turn = new EndTurnAction();
         this.actions.put("play_card", play_card);
         this.actions.put("choose_discard", choose_discard);
         this.actions.put("end_turn", end_turn);
@@ -40,7 +41,7 @@ class GameService {
         List<String> playerIds = request.getPlayerIds();
         String currentPlayer = playerIds.get(0);
         Map<String, Object> gameAttributes = request.getGameAttributes();
-        HashMap<String, List<PlayerAction>> playerAvailableActions = new HashMap<>();
+        HashMap<String, List<Action>> playerAvailableActions = new HashMap<>();
         LinkedList<PendingAction> pendingActions = new LinkedList<>();
 
         List<Card> deck = generateDeck(request.getDeckType());
@@ -86,12 +87,12 @@ class GameService {
         GameState state = games.get(action.gameId);
         if (state == null) throw new IllegalArgumentException("Invalid game ID");
 
-        System.out.println("Player " + action.playerId + " is performing action: " + action.actionType);
+        System.out.println("Player " + action.playerId + " is performing action: " + action.action);
 
         // Validate if action is allowed based on pending actions
         if (!state.getPendingActions().isEmpty()) {
             PendingAction pending = state.getPendingActions().peek();
-            if (!pending.getPlayer().equals(action.playerId) || !pending.getAction().actionType.equals(action.actionType)) {
+            if (!pending.getPlayer().equals(action.playerId) || !pending.getAction().equals(action.action)) {
                 throw new IllegalStateException("Action not allowed at this time");
             }
             executeAction(state, action);
@@ -105,33 +106,33 @@ class GameService {
         return state;
     }
 
-    private void executeAction(GameState state, PlayerActionRequest action) {
+    private void executeAction(GameState state, PlayerActionRequest actionRequest) {
         // Find the first available action that matches the action type
         //This just needs to check its the actual players turn
-        if (!state.getCurrentPlayer().equals(action.playerId)) {
+        if (!state.getCurrentPlayer().equals(actionRequest.playerId)) {
             throw new IllegalStateException("Its not your turn you FOOL");
         }
-        Optional<PlayerAction> availableAction = state.getPlayerAvailableActions().get(action.playerId)
+        Optional<Action> availableAction = state.getPlayerAvailableActions().get(actionRequest.playerId)
                 .stream()
-                .filter(availablePlayerAction -> availablePlayerAction.actionType.equals(action.actionType))
+                .filter(availablePlayerAction -> availablePlayerAction.getClass().equals(actionRequest.getAction().getClass()))
                 .findFirst();
 
         if (availableAction.isPresent()) {
-            PlayerAction actionToExecute = availableAction.get();
-            actionToExecute.applyHandlers(state, action);
+            Action actionToExecute = availableAction.get();
+            actionToExecute.execute(state, actionRequest);
 
             // Remove the first instance of the action from the list
-            List<PlayerAction> playerActions = state.getPlayerAvailableActions().get(action.playerId);
+            List<Action> playerActions = state.getPlayerAvailableActions().get(actionRequest.playerId);
 
             // Create a new list excluding the first matching action
-            List<PlayerAction> updatedActions = playerActions.stream()
-                    .filter(playerAction -> !playerAction.equals(actionToExecute) || playerActions.indexOf(playerAction) != playerActions.indexOf(actionToExecute))
+            List<Action> updatedActions = playerActions.stream()
+                    .filter(playerAction -> !playerAction.getClass().equals(actionToExecute.getClass()) || playerActions.indexOf(playerAction) != playerActions.indexOf(actionToExecute))
                     .collect(Collectors.toList());
 
             // Update the player's available actions in the state
-            state.getPlayerAvailableActions().put(action.playerId, updatedActions);
+            state.getPlayerAvailableActions().put(actionRequest.playerId, updatedActions);
         } else {
-            throw new IllegalStateException("Player action not available: " + action.actionType);
+            throw new IllegalStateException("Player action not available: " + actionRequest.action);
         }
     }
 

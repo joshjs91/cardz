@@ -1,4 +1,4 @@
-package com.joshjs.gamangine.action.handlers;
+package com.joshjs.gamangine.action;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.card.Card;
@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 
 
 @JsonTypeName("ChooseCardToDiscardHandler")
-public class ChooseCardToDiscardHandler implements ActionHandler {
+public class ChooseCardToDiscard implements Action {
 
     @Override
     public void execute(GameState state, PlayerActionRequest action) {

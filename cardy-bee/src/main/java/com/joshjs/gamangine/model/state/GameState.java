@@ -1,7 +1,7 @@
 package com.joshjs.gamangine.model.state;
 
-import com.joshjs.gamangine.action.PendingAction;
-import com.joshjs.gamangine.action.PlayerAction;
+import com.joshjs.gamangine.action.model.PendingAction;
+import com.joshjs.gamangine.action.Action;
 import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.condition.Condition;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ public class GameState {
     private List<String> players;
     private String currentPlayer;
     private Map<String, Object> gameAttributes;
-    private Map<String, List<PlayerAction>> playerAvailableActions;
+    private Map<String, List<Action>> playerAvailableActions;
     private Queue<PendingAction> pendingActions;
 
     private List<Card> drawDeck;
