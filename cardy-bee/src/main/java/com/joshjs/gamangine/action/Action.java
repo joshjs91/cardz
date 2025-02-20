@@ -11,9 +11,9 @@ import com.joshjs.gamangine.model.dto.PlayerActionRequest;
         property = "type"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = PlayCardAction.class, name = "PlayCardActionHandler"),
-        @JsonSubTypes.Type(value = ChooseCardToDiscard.class, name = "ChooseCardToDiscardHandler"),
-        @JsonSubTypes.Type(value = EndTurnAction.class, name = "EndTurnActionHandler"),
+        @JsonSubTypes.Type(value = PlayCardAction.class, name = "PlayCardAction"),
+        @JsonSubTypes.Type(value = ChooseCardToDiscardAction.class, name = "ChooseCardToDiscardAction"),
+        @JsonSubTypes.Type(value = EndTurnAction.class, name = "EndTurnAction"),
 })
 public interface Action {
     void execute(GameState state, PlayerActionRequest action);

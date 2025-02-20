@@ -8,7 +8,7 @@ import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import java.util.List;
 import java.util.Optional;
 
-@JsonTypeName("PlayCardActionHandler")
+@JsonTypeName("PlayCardAction")
 public class PlayCardAction implements Action {
 
     @Override

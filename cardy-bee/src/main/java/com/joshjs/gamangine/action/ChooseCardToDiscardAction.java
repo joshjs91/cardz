@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.function.Predicate;
 
 
-@JsonTypeName("ChooseCardToDiscardHandler")
-public class ChooseCardToDiscard implements Action {
+@JsonTypeName("ChooseCardToDiscardAction")
+public class ChooseCardToDiscardAction implements Action {
 
     @Override
     public void execute(GameState state, PlayerActionRequest action) {

@@ -6,7 +6,7 @@ import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 
 import java.util.List;
 
-@JsonTypeName("EndTurnActionHandler")
+@JsonTypeName("EndTurnAction")
 public class EndTurnAction implements Action {
 
     @Override

@@ -1,7 +1,7 @@
 package com.joshjs.gamangine.service;
 
 import com.joshjs.gamangine.action.Action;
-import com.joshjs.gamangine.action.ChooseCardToDiscard;
+import com.joshjs.gamangine.action.ChooseCardToDiscardAction;
 import com.joshjs.gamangine.action.EndTurnAction;
 import com.joshjs.gamangine.action.PlayCardAction;
 import com.joshjs.gamangine.action.model.PendingAction;
@@ -29,7 +29,7 @@ class GameService {
         this.cards = generateDefaultCards();
         this.actions = new HashMap<>();
         Action play_card = new PlayCardAction();
-        Action choose_discard = new ChooseCardToDiscard();
+        Action choose_discard = new ChooseCardToDiscardAction();
         Action end_turn = new EndTurnAction();
         this.actions.put("play_card", play_card);
         this.actions.put("choose_discard", choose_discard);
