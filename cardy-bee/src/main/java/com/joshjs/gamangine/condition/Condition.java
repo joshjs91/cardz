@@ -11,7 +11,7 @@ import com.joshjs.gamangine.model.state.GameState;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = CardsAllPlayedCondition.class, name = "CardsAllPlayedCondition"),
-        @JsonSubTypes.Type(value = GameNumberAttributeCondition.class, name = "GameTokensCentralisedCondition"),
+        @JsonSubTypes.Type(value = GameNumberAttributeCondition.class, name = "GameNumberAttributeCondition"),
 })
 public interface Condition {
     boolean evaluate(GameState state);

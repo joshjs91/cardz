@@ -4,12 +4,10 @@ import com.joshjs.gamangine.action.*;
 import com.joshjs.gamangine.action.handlers.ChooseCardToDiscardHandler;
 import com.joshjs.gamangine.action.handlers.EndTurnActionHandler;
 import com.joshjs.gamangine.action.handlers.PlayCardActionHandler;
-import com.joshjs.gamangine.model.dto.GameStateDTO;
-import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.card.DiscardCardEffect;
-import com.joshjs.gamangine.card.ModifyAttributeEffect;
+import com.joshjs.gamangine.card.ModifyGameNumberAttributeEffect;
 import com.joshjs.gamangine.model.dto.GameSetupRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import org.springframework.stereotype.Service;
@@ -29,9 +27,9 @@ class GameService {
     public GameService() {
         this.cards = generateDefaultCards();
         this.actions = new HashMap<>();
-        PlayerAction play_card = new PlayerAction("play_card", new HashMap<>(), List.of(new PlayCardActionHandler()));
-        PlayerAction choose_discard = new PlayerAction("choose_discard", new HashMap<>(), List.of(new ChooseCardToDiscardHandler()));
-        PlayerAction end_turn = new PlayerAction("end_turn", new HashMap<>(), List.of(new EndTurnActionHandler()));
+        PlayerAction play_card = new PlayerAction("play_card", new PlayCardActionHandler());
+        PlayerAction choose_discard = new PlayerAction("choose_discard", new ChooseCardToDiscardHandler());
+        PlayerAction end_turn = new PlayerAction("end_turn", new EndTurnActionHandler());
         this.actions.put("play_card", play_card);
         this.actions.put("choose_discard", choose_discard);
         this.actions.put("end_turn", end_turn);
@@ -41,10 +39,12 @@ class GameService {
         String gameId = UUID.randomUUID().toString();
         List<String> playerIds = request.getPlayerIds();
         String currentPlayer = playerIds.get(0);
-        HashMap<String, Object> gameAttributes = new HashMap<>();
+        Map<String, Object> gameAttributes = request.getGameAttributes();
         HashMap<String, List<PlayerAction>> playerAvailableActions = new HashMap<>();
         LinkedList<PendingAction> pendingActions = new LinkedList<>();
-        ArrayList<Card> drawDeck = new ArrayList<>(generateDeck());
+
+        List<Card> deck = generateDeck(request.getDeckType());
+        ArrayList<Card> drawDeck = new ArrayList<>(deck);
         ArrayList<Card> discardPile = new ArrayList<>();
         HashMap<String, List<Card>> playerHands = new HashMap<>();
         GameState state = new GameState(
@@ -57,7 +57,7 @@ class GameService {
                 drawDeck,
                 discardPile,
                 playerHands,
-                request.getGameEndingCondition()
+                request.getGameEndedCondition()
         );
 
         for (String player : playerIds) {
@@ -139,9 +139,11 @@ class GameService {
     private Map<String, Card> generateDefaultCards() {
         Map<String, Card> defaultCards = new HashMap<>();
         Map<String, Class<?>> cardRequiredInputs = new HashMap<>();
+        defaultCards.put("Remove tokens", new Card("Remove tokens", List.of(new ModifyGameNumberAttributeEffect()), cardRequiredInputs));
         defaultCards.put("Card1", new Card("Card1", List.of(), cardRequiredInputs));
         defaultCards.put("SuperDuper", new Card("SuperDuper", List.of(), cardRequiredInputs));
         defaultCards.put("SuperDuper pooper", new Card("SuperDuper", List.of(), cardRequiredInputs));
+        defaultCards.put("No effects", new Card("No effects", List.of(), cardRequiredInputs));
         return defaultCards;
     }
 
@@ -151,8 +153,8 @@ class GameService {
         Map<String, Class<?>> cardRequiredInputs = new HashMap<>();
         cardRequiredInputs.put("discardCardTargetPlayer", String.class);
         cardRequiredInputs.put("modifyAttributeTargetPlayer", String.class);
-        defaultCards.put("Card1", new Card("Card1", List.of(new DiscardCardEffect(), new ModifyAttributeEffect()), cardRequiredInputs));
-        defaultCards.put("SuperDuper", new Card("SuperDuper", List.of(new ModifyAttributeEffect()), cardRequiredInputs));
+        defaultCards.put("Card1", new Card("Card1", List.of(new DiscardCardEffect(), new ModifyGameNumberAttributeEffect()), cardRequiredInputs));
+        defaultCards.put("SuperDuper", new Card("SuperDuper", List.of(new ModifyGameNumberAttributeEffect()), cardRequiredInputs));
         return defaultCards;
     }
 
@@ -160,7 +162,18 @@ class GameService {
         return games.get(gameId);
     }
 
-    private List<Card> generateDeck() {
-        return new ArrayList<>(cards.values());
+    private List<Card> generateDeck(String deckType) {
+        List<Card> defaultDeck = generateDefaultCards().values().stream().toList();
+
+        if (deckType == null) {
+            return defaultDeck;
+        }
+
+        return switch (deckType) {
+            case "tokenCards" -> generateDefaultCards().values().stream().filter(card -> card.getName().contains("tokens")).toList();
+            case "complex" -> generateComplexCards().values().stream().toList();
+            case "noEffectsCards" -> generateDefaultCards().values().stream().filter(card -> card.getName().contains("No effects")).toList();
+            default -> defaultDeck;
+        };
     }
 }

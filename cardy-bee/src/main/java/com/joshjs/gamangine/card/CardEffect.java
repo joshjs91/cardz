@@ -8,7 +8,7 @@ import com.joshjs.gamangine.model.state.GameState;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = DiscardCardEffect.class, name = "DiscardCardEffect"),
-        @JsonSubTypes.Type(value = ModifyAttributeEffect.class, name = "ModifyAttributeEffect")
+        @JsonSubTypes.Type(value = ModifyGameNumberAttributeEffect.class, name = "ModifyGameAttributeEffect")
 })
 interface CardEffect {
     void applyEffect(GameState state, PlayerActionRequest action);

@@ -1,5 +1,6 @@
 package com.joshjs.gamangine.model.dto;
 
+import com.joshjs.gamangine.action.PlayerAction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

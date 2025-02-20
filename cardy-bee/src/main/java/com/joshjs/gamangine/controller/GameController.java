@@ -4,7 +4,6 @@ import com.joshjs.gamangine.condition.CardsAllPlayedCondition;
 import com.joshjs.gamangine.condition.Condition;
 import com.joshjs.gamangine.condition.GameNumberAttributeCondition;
 import com.joshjs.gamangine.model.dto.GameSetupRequest;
-import com.joshjs.gamangine.model.dto.GameStateDTO;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import com.joshjs.gamangine.service.GameService;

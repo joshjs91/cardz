@@ -48,7 +48,7 @@ public class GameControllerIntegrationTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         // Create an empty HttpEntity with the headers
-        HttpEntity<GameSetupRequest> newGameRequest = new HttpEntity<>(new GameSetupRequest(players, gameEndingCondition), headers);
+        HttpEntity<GameSetupRequest> newGameRequest = new HttpEntity<>(new GameSetupRequest(players, gameEndingCondition, new HashMap<>(), "noEffectsCards"), headers);
 
         // Perform a POST request with the appropriate headers
         ResponseEntity<GameState> response = template.exchange("/game/start", HttpMethod.POST, newGameRequest, GameState.class);

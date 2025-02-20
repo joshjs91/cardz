@@ -18,13 +18,9 @@ import static com.joshjs.gamangine.validator.UserInputValidator.verifyUserInput;
 @AllArgsConstructor
 public class PlayerAction {
     public String actionType;
-    public Map<String, Class<?>> requiredInputs;
-    public List<ActionHandler> actionHandlers;
+    public ActionHandler actionHandler;
 
     public void applyHandlers(GameState gameState, PlayerActionRequest action) {
-        verifyUserInput(requiredInputs, action);
-        for (ActionHandler actionHandler : actionHandlers) {
-            actionHandler.execute(gameState, action);
-        }
+        actionHandler.execute(gameState, action);
     }
 }

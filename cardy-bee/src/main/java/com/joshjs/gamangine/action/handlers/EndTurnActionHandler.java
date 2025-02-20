@@ -27,8 +27,8 @@ public class EndTurnActionHandler implements ActionHandler {
             // Assign available actions for the new player
             //TODO there should be a default set of actions somewhere the the turn ends
             List<PlayerAction> newActions = List.of(
-                    new PlayerAction("play_card", new HashMap<>(), List.of(new PlayCardActionHandler())),
-                    new PlayerAction("end_turn", new HashMap<>(), List.of(new EndTurnActionHandler()))
+                    new PlayerAction("play_card", new PlayCardActionHandler()),
+                    new PlayerAction("end_turn", new EndTurnActionHandler())
             );
             state.getPlayerAvailableActions().put(state.getCurrentPlayer(), newActions);
             System.out.println("Turn changed to player: " + state.getCurrentPlayer());

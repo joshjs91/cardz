@@ -8,23 +8,29 @@ import com.joshjs.gamangine.model.state.GameState;
 @JsonTypeName("GameNumberAttributeCondition")
 public class GameNumberAttributeCondition implements Condition {
 
-    @JsonProperty("conditionValue")
-    private Integer conditionValue;
+    @JsonProperty("attributeValue")
+    private Integer attributeValue;
 
     @JsonProperty("calculationType")
     private String calculationType;
 
-    //TODO can add another value to represent what type attribute is???
     @JsonProperty("attribute")
     private String attribute;
 
     @Override
     public boolean evaluate(GameState state) {
-        int gameAttributeValue = (Integer) state.getGameAttributes().get(attribute);
+
+        //TODO needs to do error handling of null calculationType etc.
+        Integer gameAttributeValue = (Integer) state.getGameAttributes().get(attribute);
+
+        if (gameAttributeValue == null) {
+            throw new IllegalArgumentException("Game does not have attribute: " + attribute);
+        }
+
         return switch (calculationType.toLowerCase()) {
-            case "greaterthan" -> gameAttributeValue > conditionValue;
-            case "lessthan" -> gameAttributeValue < conditionValue;
-            case "equals" -> gameAttributeValue == conditionValue;
+            case "greaterthan" -> gameAttributeValue > attributeValue;
+            case "lessthan" -> gameAttributeValue < attributeValue;
+            case "equals" -> gameAttributeValue == attributeValue;
             default -> throw new IllegalArgumentException("Invalid calculation type: " + calculationType);
         };
     }

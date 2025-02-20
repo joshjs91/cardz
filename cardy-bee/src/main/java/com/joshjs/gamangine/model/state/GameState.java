@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import java.util.*;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class GameState {
     private String gameId;

@@ -1,13 +1,22 @@
 package com.joshjs.gamangine.card;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 
-@JsonTypeName("ModifyAttributeEffect")
-public class ModifyAttributeEffect implements CardEffect {
+@JsonTypeName("ModifyGameAttributeEffect")
+public class ModifyPlayerAttributeEffect implements CardEffect {
 
+    //TODO these attributes this can be put into an abstract class?
+    @JsonProperty("attributeValue")
+    private Integer attributeValue;
 
+    @JsonProperty("calculationType")
+    private String calculationType;
+
+    @JsonProperty("attribute")
+    private String attribute;
 
     @Override
     public void applyEffect(GameState state, PlayerActionRequest action) {
