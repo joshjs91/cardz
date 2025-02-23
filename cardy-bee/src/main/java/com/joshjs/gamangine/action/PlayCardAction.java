@@ -16,31 +16,33 @@ import java.util.Optional;
 @Data
 public class PlayCardAction implements Action {
 
-    @JsonProperty("cardName")
-    private String cardName;
+    @JsonProperty("card")
+    private Card playedCard;
 
     @Override
     public Map<String, String> getRequiredInputs() {
         Map<String, String> inputs = new HashMap<>();
-        inputs.put("cardName", "String");
+        inputs.put("playedCard", "Card");
         return inputs;
     }
 
     @Override
     public void execute(GameState state, PlayerActionRequest action) {
-        if (cardName == null) {
+        if (playedCard == null) {
             throw new IllegalArgumentException("Action input 'cardName' required for action");
         }
         List<Card> playerHand = state.getPlayerHands().get(action.playerId);
-        Optional<Card> cardOpt = playerHand.stream().filter(card -> card.getName().equals(cardName)).findFirst();
+        Optional<Card> cardOpt = playerHand.stream().filter(cardInHand -> cardInHand.equals(playedCard)).findFirst();
         if (cardOpt.isPresent()) {
-            Card card = cardOpt.get();
-            card.applyEffects(state, action);
-            playerHand.remove(card);
-            state.getDiscardPile().add(card);
+            Card cardInHand = cardOpt.get();
+            playerHand.remove(cardInHand);
+            //TODO ADD TEST FOR THIS.....MAKE SURE ITS RUNNING PLAYED CARD AND REMOVING CARD ETC. 
+            playedCard.applyEffects(state, action);
+            state.getDiscardPile().add(cardInHand);
         } else {
             throw new IllegalStateException("User cant play a card they don't have you fool");
         }
-
     }
+
+
 }

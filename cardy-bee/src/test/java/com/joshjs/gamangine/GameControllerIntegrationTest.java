@@ -1,5 +1,6 @@
 package com.joshjs.gamangine;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joshjs.gamangine.action.Action;
 import com.joshjs.gamangine.action.EndTurnAction;
 import com.joshjs.gamangine.action.PlayCardAction;
@@ -16,10 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,7 +36,7 @@ public class GameControllerIntegrationTest {
         for (String player : gameState.getPlayerHands().keySet()) {
             for (Card card : gameState.getPlayerHands().get(player)) {
                 PlayCardAction action = new PlayCardAction();
-                action.setCardName(card.getName());
+                action.setPlayedCard(new Card(card.getName(), card.getEffects()));
                 runAction(gameState.getGameId(), player, action);
                 runAction(gameState.getGameId(), player, new EndTurnAction());
             }
@@ -51,8 +50,19 @@ public class GameControllerIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // Create an empty HttpEntity with the headers
-        HttpEntity<GameSetupRequest> newGameRequest = new HttpEntity<>(new GameSetupRequest(players, gameEndingCondition, new HashMap<>(), "noEffectsCards"), headers);
+        // Create the GameSetupRequest
+        GameSetupRequest gameSetupRequest = new GameSetupRequest(players, gameEndingCondition, new HashMap<>(), "noEffectsCards");
+
+        // Use Jackson's ObjectMapper to easily serialize the object and print it
+        try {
+            String requestBody = new ObjectMapper().writeValueAsString(gameSetupRequest);  // Serialize object to JSON
+            System.out.println("Request Body: " + requestBody);  // Print the request body to the console
+        } catch (Exception e) {
+            System.err.println("Error serializing request body: " + e.getMessage());
+        }
+
+        // Create an HttpEntity with the GameSetupRequest and headers
+        HttpEntity<GameSetupRequest> newGameRequest = new HttpEntity<>(gameSetupRequest, headers);
 
         // Perform a POST request with the appropriate headers
         ResponseEntity<GameState> response = template.exchange("/game/start", HttpMethod.POST, newGameRequest, GameState.class);
@@ -79,6 +89,13 @@ public class GameControllerIntegrationTest {
 
         HttpEntity<PlayerActionRequest> playerActionRequest = new HttpEntity<>(new PlayerActionRequest(gameId, player, action), headers);
 
+        // Use Jackson's ObjectMapper to easily serialize the object and print it
+        try {
+            String requestBody = new ObjectMapper().writeValueAsString(playerActionRequest);  // Serialize object to JSON
+            System.out.println("Request Body: " + requestBody);  // Print the request body to the console
+        } catch (Exception e) {
+            System.err.println("Error serializing request body: " + e.getMessage());
+        }
         // Perform a POST request with the appropriate headers
         ResponseEntity<GameState> response = template.exchange("/game/action", HttpMethod.POST, playerActionRequest, GameState.class);
 

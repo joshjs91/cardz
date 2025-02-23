@@ -44,7 +44,7 @@ public class GameNumberAttributeCondition implements Condition {
         return switch (calculationType.toLowerCase()) {
             case "greaterthan" -> gameAttributeValue > modificationValue;
             case "lessthan" -> gameAttributeValue < modificationValue;
-            case "equals" -> gameAttributeValue == modificationValue;
+            case "equals" -> gameAttributeValue.equals(modificationValue);
             default -> throw new IllegalArgumentException("Invalid calculation type: " + calculationType);
         };
     }
