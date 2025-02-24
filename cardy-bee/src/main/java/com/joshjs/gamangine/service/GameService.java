@@ -14,13 +14,13 @@ import com.joshjs.gamangine.model.state.GameState;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public
 class GameService {
     //These are all repositories of sorts
-    private final Map<String, GameState> games = new HashMap<>();
+    //TODO turn this into a repository......
+    final Map<String, GameState> games = new HashMap<>();
     private final Map<String, Card> cards;
     private final Map<String, Action> actions;
     //TODO is there a list of allowed actions here too?
@@ -60,7 +60,9 @@ class GameService {
                 drawDeck,
                 discardPile,
                 playerHands,
-                request.getGameEndedCondition()
+                request.getGameEndedCondition(),
+                new ArrayList<>(),
+                new ArrayList<>()
         );
 
         for (String player : playerIds) {
@@ -85,62 +87,64 @@ class GameService {
         return drawnCards;
     }
 
-    public GameState executeAction(PlayerActionRequest action) {
-        GameState state = games.get(action.gameId);
-        if (state == null) throw new IllegalArgumentException("Invalid game ID");
-
-        System.out.println("Player " + action.playerId + " is performing action: " + action.action);
-
-        // Validate if action is allowed based on pending actions
-        if (!state.getPendingActions().isEmpty()) {
-            PendingAction pending = state.getPendingActions().peek();
-            if (!pending.getPlayer().equals(action.playerId) || !pending.getAction().equals(action.action)) {
-                throw new IllegalStateException("Action not allowed at this time");
-            }
-            executeAction(state, action);
-            state.getPendingActions().poll();
-        } else {
-            // Execute the action
-            executeAction(state, action);
+    public GameState executeAction(PlayerActionRequest actionRequest) {
+        GameState state = games.get(actionRequest.gameId);
+        if (state == null) {
+            throw new IllegalArgumentException("Invalid game ID");
         }
 
+        System.out.println("Player " + actionRequest.playerId + " is performing action: " + actionRequest.action);
+
+        // Validate and execute the action
+        if (isActionAllowed(state, actionRequest)) {
+            actionRequest.action.execute(state, actionRequest);
+
+            // Remove pending action if it exists
+            if (!state.getPendingActions().isEmpty()) {
+                PendingAction pending = state.getPendingActions().peek();
+                if (playerMatchesNextPendingActionPlayer(pending.getPlayer(), actionRequest) &&
+                        actionMatchesNextPendingAction(pending.getAction(), actionRequest.getAction())) {
+                    state.getPendingActions().poll();
+                }
+            }
+
+            // Update the player's available actions in the state
+            updatePlayerActions(state, actionRequest);
+        } else {
+            throw new IllegalStateException("Action not allowed: " + actionRequest.action);
+        }
 
         return state;
     }
 
-    private void executeAction(GameState state, PlayerActionRequest actionRequest) {
-        // Find the first available action that matches the action type
-        //This just needs to check its the actual players turn
-        if (!state.getCurrentPlayer().equals(actionRequest.playerId)) {
-            throw new IllegalStateException("Its not your turn you FOOL");
+    public boolean isActionAllowed(GameState state, PlayerActionRequest actionRequest) {
+        // Check if the action is the next pending action
+        if (!state.getPendingActions().isEmpty()) {
+            PendingAction pending = state.getPendingActions().peek();
+            if (!playerMatchesNextPendingActionPlayer(pending.getPlayer(), actionRequest) || !actionMatchesNextPendingAction(pending.getAction(), actionRequest.getAction())) {
+                return false;
+            }
         }
 
-        if (actionAllowed(state, actionRequest)) {
-            actionRequest.action.execute(state, actionRequest);
-
-            // Update the player's available actions in the state by creating a new list so that its mutable for some fucking reason
-            List<Action> updatedActions = new ArrayList<>(state.getPlayerAvailableActions().get(actionRequest.playerId));
-            updatedActions.remove(nextActionOfType(state,actionRequest));
-            state.getPlayerAvailableActions().put(actionRequest.playerId, updatedActions);
-        } else {
-            throw new IllegalStateException("Player action not available: " + actionRequest.action);
-        }
-    }
-
-    private Boolean actionAllowed(GameState state, PlayerActionRequest actionRequest) {
-        return state.getPlayerAvailableActions().get(actionRequest.playerId)
+        // Check if the action is allowed for the player
+        return state.getPlayerAvailableActions().getOrDefault(actionRequest.playerId, Collections.emptyList())
                 .stream()
-                .anyMatch(availablePlayerAction -> availablePlayerAction.getClass().equals(actionRequest.getAction().getClass()));
+                .anyMatch(availablePlayerAction -> actionMatchesNextPendingAction(availablePlayerAction, actionRequest.getAction()));
     }
 
-    private Action nextActionOfType(GameState state, PlayerActionRequest actionRequest) {
-        return state.getPlayerAvailableActions().get(actionRequest.playerId)
-                .stream()
-                .filter(availablePlayerAction -> availablePlayerAction.getClass().equals(actionRequest.getAction().getClass()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Should never get here... action has run and being removed from usable actions"));
+    private boolean actionMatchesNextPendingAction(Action pending, Action actionRequest) {
+        return pending.getClass().equals(actionRequest.getClass());
     }
 
+    private boolean playerMatchesNextPendingActionPlayer(String nextPendingActionPlayer, PlayerActionRequest actionRequest) {
+        return nextPendingActionPlayer.equals(actionRequest.playerId);
+    }
+
+    public void updatePlayerActions(GameState state, PlayerActionRequest actionRequest) {
+        List<Action> updatedActions = new ArrayList<>(state.getPlayerAvailableActions().get(actionRequest.playerId));
+        updatedActions.removeIf(action -> actionMatchesNextPendingAction(action, actionRequest.getAction()));
+        state.getPlayerAvailableActions().put(actionRequest.playerId, updatedActions);
+    }
 
     //TODO turn into a factory
     private Map<String, Card> generateDefaultCards() {

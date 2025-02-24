@@ -6,6 +6,7 @@ import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,9 +14,10 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 
+@EqualsAndHashCode(callSuper = true)
 @JsonTypeName("ChooseCardToDiscardAction")
 @Data
-public class ChooseCardToDiscardAction implements Action {
+public class ChooseCardToDiscardAction extends BaseAction {
 
     @JsonProperty("cardName")
     private String cardName;
@@ -35,6 +37,11 @@ public class ChooseCardToDiscardAction implements Action {
         Map<String, String> inputs = new HashMap<>();
         inputs.put("cardName", "String");
         return inputs;
+    }
+
+    @Override
+    public Boolean isRequired() {
+        return null;
     }
 
     //TODO this could be put into some card helper class

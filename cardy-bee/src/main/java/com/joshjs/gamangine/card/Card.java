@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -15,9 +16,8 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Card {
-    //TODO make private
     private String name;
-    private List<CardEffect> effects;
+    private List<CardEffect> effects = new ArrayList<>();
 
     public void applyEffects(GameState state, PlayerActionRequest action) {
         System.out.println("Player " + action.playerId + " played card: " + name);

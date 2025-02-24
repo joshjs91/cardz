@@ -20,4 +20,5 @@ import java.util.Map;
 public interface Action {
     void execute(GameState state, PlayerActionRequest action);
     Map<String, String> getRequiredInputs();
+    Boolean isRequired();
 }

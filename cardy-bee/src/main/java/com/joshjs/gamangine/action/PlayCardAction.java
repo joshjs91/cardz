@@ -5,16 +5,20 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.model.state.GameState;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@EqualsAndHashCode(callSuper = true)
 @JsonTypeName("PlayCardAction")
 @Data
-public class PlayCardAction implements Action {
+public class PlayCardAction extends BaseAction {
 
     @JsonProperty("card")
     private Card playedCard;
@@ -36,7 +40,7 @@ public class PlayCardAction implements Action {
         if (cardOpt.isPresent()) {
             Card cardInHand = cardOpt.get();
             playerHand.remove(cardInHand);
-            //TODO ADD TEST FOR THIS.....MAKE SURE ITS RUNNING PLAYED CARD AND REMOVING CARD ETC. 
+            //TODO ADD TEST FOR THIS.....MAKE SURE ITS RUNNING PLAYED CARD AND REMOVING CARD ETC.
             playedCard.applyEffects(state, action);
             state.getDiscardPile().add(cardInHand);
         } else {
