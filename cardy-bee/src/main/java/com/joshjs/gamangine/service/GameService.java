@@ -5,6 +5,7 @@ import com.joshjs.gamangine.action.ChooseCardToDiscardAction;
 import com.joshjs.gamangine.action.EndTurnAction;
 import com.joshjs.gamangine.action.PlayCardAction;
 import com.joshjs.gamangine.action.model.PendingAction;
+import com.joshjs.gamangine.card.DeckFactory;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.card.effects.DiscardCardEffect;
@@ -21,12 +22,10 @@ class GameService {
     //These are all repositories of sorts
     //TODO turn this into a repository......
     final Map<String, GameState> games = new HashMap<>();
-    private final Map<String, Card> cards;
     private final Map<String, Action> actions;
     //TODO is there a list of allowed actions here too?
 
     public GameService() {
-        this.cards = generateDefaultCards();
         this.actions = new HashMap<>();
         Action play_card = new PlayCardAction();
         Action choose_discard = new ChooseCardToDiscardAction();
@@ -49,6 +48,7 @@ class GameService {
         ArrayList<Card> discardPile = new ArrayList<>();
         HashMap<String, List<Card>> playerHands = new HashMap<>();
         HashMap<String, Map<String, Object>> playerAttributes = new HashMap<>();
+
         GameState state = new GameState(
                 gameId,
                 playerIds,
@@ -66,6 +66,7 @@ class GameService {
         );
 
         for (String player : playerIds) {
+            state.getPlayerAttributes().put(player, new HashMap<>());
             state.getPlayerHands().put(player, drawCards(state.getDrawDeck(), 5));
             if (player == state.getCurrentPlayer()) {
                 state.getPlayerAvailableActions().put(state.getCurrentPlayer(), actions.values().stream().toList());
@@ -103,7 +104,7 @@ class GameService {
             if (!state.getPendingActions().isEmpty()) {
                 PendingAction pending = state.getPendingActions().peek();
                 if (playerMatchesNextPendingActionPlayer(pending.getPlayer(), actionRequest) &&
-                        actionMatchesNextPendingAction(pending.getAction(), actionRequest.getAction())) {
+                        actionMatchesNextAvailableAction(pending.getAction(), actionRequest.getAction())) {
                     state.getPendingActions().poll();
                 }
             }
@@ -121,7 +122,7 @@ class GameService {
         // Check if the action is the next pending action
         if (!state.getPendingActions().isEmpty()) {
             PendingAction pending = state.getPendingActions().peek();
-            if (!playerMatchesNextPendingActionPlayer(pending.getPlayer(), actionRequest) || !actionMatchesNextPendingAction(pending.getAction(), actionRequest.getAction())) {
+            if (!playerMatchesNextPendingActionPlayer(pending.getPlayer(), actionRequest) || !actionMatchesNextAvailableAction(pending.getAction(), actionRequest.getAction())) {
                 return false;
             }
         }
@@ -129,11 +130,11 @@ class GameService {
         // Check if the action is allowed for the player
         return state.getPlayerAvailableActions().getOrDefault(actionRequest.playerId, Collections.emptyList())
                 .stream()
-                .anyMatch(availablePlayerAction -> actionMatchesNextPendingAction(availablePlayerAction, actionRequest.getAction()));
+                .anyMatch(availablePlayerAction -> actionMatchesNextAvailableAction(availablePlayerAction, actionRequest.getAction()));
     }
 
-    private boolean actionMatchesNextPendingAction(Action pending, Action actionRequest) {
-        return pending.getClass().equals(actionRequest.getClass());
+    private boolean actionMatchesNextAvailableAction(Action allowedOrPendingAction, Action actionRequest) {
+        return allowedOrPendingAction.getClass().equals(actionRequest.getClass());
     }
 
     private boolean playerMatchesNextPendingActionPlayer(String nextPendingActionPlayer, PlayerActionRequest actionRequest) {
@@ -142,31 +143,8 @@ class GameService {
 
     public void updatePlayerActions(GameState state, PlayerActionRequest actionRequest) {
         List<Action> updatedActions = new ArrayList<>(state.getPlayerAvailableActions().get(actionRequest.playerId));
-        updatedActions.removeIf(action -> actionMatchesNextPendingAction(action, actionRequest.getAction()));
+        updatedActions.removeIf(action -> actionMatchesNextAvailableAction(action, actionRequest.getAction()));
         state.getPlayerAvailableActions().put(actionRequest.playerId, updatedActions);
-    }
-
-    //TODO turn into a factory
-    private Map<String, Card> generateDefaultCards() {
-        Map<String, Card> defaultCards = new HashMap<>();
-        Map<String, Class<?>> cardRequiredInputs = new HashMap<>();
-        defaultCards.put("Remove tokens", new Card("Remove tokens", List.of(new ModifyGameNumberAttributeEffect())));
-        defaultCards.put("Card1", new Card("Card1", List.of()));
-        defaultCards.put("SuperDuper", new Card("SuperDuper", List.of()));
-        defaultCards.put("SuperDuper pooper", new Card("SuperDuper", List.of()));
-        defaultCards.put("No effects", new Card("No effects", List.of()));
-        return defaultCards;
-    }
-
-    private Map<String, Card> generateComplexCards() {
-        Map<String, Card> defaultCards = new HashMap<>();
-        //TODO these validations are wrong
-        Map<String, Class<?>> cardRequiredInputs = new HashMap<>();
-        cardRequiredInputs.put("discardCardTargetPlayer", String.class);
-        cardRequiredInputs.put("modifyAttributeTargetPlayer", String.class);
-        defaultCards.put("Card1", new Card("Card1", List.of(new DiscardCardEffect(), new ModifyGameNumberAttributeEffect())));
-        defaultCards.put("SuperDuper", new Card("SuperDuper", List.of(new ModifyGameNumberAttributeEffect())));
-        return defaultCards;
     }
 
     public GameState getGameState(String gameId) {
@@ -174,17 +152,6 @@ class GameService {
     }
 
     private List<Card> generateDeck(String deckType) {
-        List<Card> defaultDeck = generateDefaultCards().values().stream().toList();
-
-        if (deckType == null) {
-            return defaultDeck;
-        }
-
-        return switch (deckType) {
-            case "tokenCards" -> generateDefaultCards().values().stream().filter(card -> card.getName().contains("tokens")).toList();
-            case "complex" -> generateComplexCards().values().stream().toList();
-            case "noEffectsCards" -> generateDefaultCards().values().stream().filter(card -> card.getName().contains("No effects")).toList();
-            default -> defaultDeck;
-        };
+        return DeckFactory.generateDeck(deckType);
     }
 }
