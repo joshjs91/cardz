@@ -16,5 +16,5 @@ public class GameSetupRequest {
     private Condition gameEndedCondition;
     private Map<String, Object> gameAttributes;
     private String deckType;
-
+    private Map<String, Map<String, Object>> playerAttributes;
 }

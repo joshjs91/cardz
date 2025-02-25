@@ -14,7 +14,7 @@ import java.util.Map;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = PlayCardAction.class, name = "PlayCardAction"),
-        @JsonSubTypes.Type(value = ChooseCardToDiscardAction.class, name = "ChooseCardToDiscardAction"),
+        @JsonSubTypes.Type(value = DiscardCardAction.class, name = "DiscardCardAction"),
         @JsonSubTypes.Type(value = EndTurnAction.class, name = "EndTurnAction"),
 })
 public interface Action {

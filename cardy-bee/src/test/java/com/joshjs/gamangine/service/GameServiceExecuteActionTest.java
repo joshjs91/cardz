@@ -72,7 +72,7 @@ class GameServiceExecuteActionTest {
     @Test
     void testExecuteActionNotAllowed() {
         GameState state = createNewGame("test-game-2");
-        ChooseCardToDiscardAction action = new ChooseCardToDiscardAction();
+        DiscardCardAction action = new DiscardCardAction();
         action.setIsRequired(true);
         PlayerActionRequest request = createActionRequest("test-game-2", "player1", action);
 

@@ -1,15 +1,14 @@
 package com.joshjs.gamangine.service;
 
 import com.joshjs.gamangine.action.Action;
-import com.joshjs.gamangine.action.ChooseCardToDiscardAction;
+import com.joshjs.gamangine.action.DiscardCardAction;
 import com.joshjs.gamangine.action.EndTurnAction;
 import com.joshjs.gamangine.action.PlayCardAction;
 import com.joshjs.gamangine.action.model.PendingAction;
 import com.joshjs.gamangine.card.DeckFactory;
+import com.joshjs.gamangine.game.GameConfig;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.card.Card;
-import com.joshjs.gamangine.card.effects.DiscardCardEffect;
-import com.joshjs.gamangine.card.effects.ModifyGameNumberAttributeEffect;
 import com.joshjs.gamangine.model.dto.GameSetupRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import org.springframework.stereotype.Service;
@@ -19,20 +18,10 @@ import java.util.*;
 @Service
 public
 class GameService {
-    //These are all repositories of sorts
     //TODO turn this into a repository......
     final Map<String, GameState> games = new HashMap<>();
-    private final Map<String, Action> actions;
-    //TODO is there a list of allowed actions here too?
 
     public GameService() {
-        this.actions = new HashMap<>();
-        Action play_card = new PlayCardAction();
-        Action choose_discard = new ChooseCardToDiscardAction();
-        Action end_turn = new EndTurnAction();
-        this.actions.put("play_card", play_card);
-        this.actions.put("choose_discard", choose_discard);
-        this.actions.put("end_turn", end_turn);
     }
 
     public GameState startGame(GameSetupRequest request) {
@@ -60,16 +49,14 @@ class GameService {
                 drawDeck,
                 discardPile,
                 playerHands,
-                request.getGameEndedCondition(),
-                new ArrayList<>(),
-                new ArrayList<>()
+                request.getGameEndedCondition()
         );
 
         for (String player : playerIds) {
             state.getPlayerAttributes().put(player, new HashMap<>());
             state.getPlayerHands().put(player, drawCards(state.getDrawDeck(), 5));
             if (player == state.getCurrentPlayer()) {
-                state.getPlayerAvailableActions().put(state.getCurrentPlayer(), actions.values().stream().toList());
+                state.getPlayerAvailableActions().put(state.getCurrentPlayer(), GameConfig.genericTurnActions());
             } else {
                 state.getPlayerAvailableActions().put(player, new ArrayList<>());
             }

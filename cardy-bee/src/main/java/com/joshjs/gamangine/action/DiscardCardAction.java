@@ -15,9 +15,9 @@ import java.util.function.Predicate;
 
 
 @EqualsAndHashCode(callSuper = true)
-@JsonTypeName("ChooseCardToDiscardAction")
+@JsonTypeName("DiscardCardAction")
 @Data
-public class ChooseCardToDiscardAction extends BaseAction {
+public class DiscardCardAction extends BaseAction {
 
     @JsonProperty("cardName")
     private String cardName;

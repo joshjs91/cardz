@@ -31,9 +31,6 @@ public class GameState {
     private Map<String, List<Card>> playerHands;
 
     private Condition gameEndedCondition;
-    // New fields for required and optional actions on turn change
-    public List<String> turnRequiredActions = new ArrayList<>();
-    public List<String> turnOptionalActions = new ArrayList<>();
 
     public boolean isGameEnded() {
         return gameEndedCondition != null && gameEndedCondition.evaluate(this);

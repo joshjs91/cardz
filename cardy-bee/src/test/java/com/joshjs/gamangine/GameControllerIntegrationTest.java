@@ -30,15 +30,19 @@ public class GameControllerIntegrationTest {
 
     @Test
     public void testBasicGameFlow() {
-        GameState gameState = startNewGame(List.of("player1"), new CardsAllPlayedCondition());
+        GameState gameState = startNewGame(List.of("player1", "player2"), new CardsAllPlayedCondition());
         assertThat(gameState.getGameId()).isNotNull();
         //TODO convert action type to be an actual object to provide input
-        for (String player : gameState.getPlayerHands().keySet()) {
-            for (Card card : gameState.getPlayerHands().get(player)) {
+        while (!gameState.isGameEnded()) {
+            // for each player play a card and then end their turn.
+            for (String player : gameState.getPlayerHands().keySet()) {
+                Card card = gameState.getPlayerHands().get(player).get(0);
                 PlayCardAction action = new PlayCardAction();
-                action.setPlayedCard(new Card(card.getName(), card.getEffects()));
-                runAction(gameState.getGameId(), player, action);
+                    action.setPlayedCard(new Card(card.getName(), card.getEffects()));
+                    runAction(gameState.getGameId(), player, action);
+
                 runAction(gameState.getGameId(), player, new EndTurnAction());
+                gameState = getGame(gameState.getGameId());
             }
         }
         GameState finalGameState = getGame(gameState.getGameId());
@@ -51,7 +55,7 @@ public class GameControllerIntegrationTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         // Create the GameSetupRequest
-        GameSetupRequest gameSetupRequest = new GameSetupRequest(players, gameEndingCondition, new HashMap<>(), "noEffectsCards");
+        GameSetupRequest gameSetupRequest = new GameSetupRequest(players, gameEndingCondition, new HashMap<>(), "noEffectsCards", new HashMap<>());
 
         // Use Jackson's ObjectMapper to easily serialize the object and print it
         try {

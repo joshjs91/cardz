@@ -13,11 +13,9 @@ public class DeckFactory {
             case "complex" -> generateComplexDeck();
             case "tokenCards" -> generateDefaultDeck().stream()
                     .filter(card -> card.getName().contains("tokens"))
-                    .limit(20)
                     .toList();
             case "noEffectsCards" -> generateDefaultDeck().stream()
                     .filter(card -> card.getName().contains("No effects"))
-                    .limit(20)
                     .toList();
             default -> generateDefaultDeck();
         };
@@ -26,7 +24,7 @@ public class DeckFactory {
     private static List<Card> generateDefaultDeck() {
         List<Card> deck = new ArrayList<>();
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 20; i++) {
             deck.add(new Card("Remove tokens", List.of(new ModifyGameNumberAttributeEffect())));
             deck.add(new Card("Card1", List.of()));
             deck.add(new Card("SuperDuper", List.of()));
@@ -34,7 +32,7 @@ public class DeckFactory {
             deck.add(new Card("No effects", List.of()));
         }
 
-        return deck.subList(0, 20); // Limit deck to 20 cards
+        return deck;
     }
 
     private static List<Card> generateComplexDeck() {

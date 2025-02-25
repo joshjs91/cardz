@@ -21,7 +21,8 @@ class GameServiceStartGameTest {
                 Arrays.asList("player1", "player2"),
                 null,
                 Map.of("attribute1", 10),
-                "defaultDeck"
+                "defaultDeck",
+                Map.of()
         );
 
         GameState gameState = gameService.startGame(request);
@@ -41,7 +42,8 @@ class GameServiceStartGameTest {
                 new ArrayList<>(),
                 null,
                 Map.of("attribute1", 10),
-                "defaultDeck"
+                "defaultDeck",
+                Map.of()
         );
 
         Exception exception = assertThrows(IndexOutOfBoundsException.class, () -> gameService.startGame(request));
@@ -54,7 +56,8 @@ class GameServiceStartGameTest {
                 Arrays.asList("player1", "player2"),
                 null,
                 new HashMap<>(),
-                "complex"
+                "complex",
+                Map.of()
         );
 
         GameState gameState = gameService.startGame(request);
@@ -70,7 +73,8 @@ class GameServiceStartGameTest {
                 Arrays.asList("player1", "player2"),
                 null,
                 new HashMap<>(),
-                "defaultDeck"
+                "defaultDeck",
+                Map.of()
         );
 
         GameState gameState = gameService.startGame(request);
@@ -86,7 +90,8 @@ class GameServiceStartGameTest {
                 Arrays.asList("player1", "player2"),
                 null,
                 new HashMap<>(),
-                "defaultDeck"
+                "defaultDeck",
+                Map.of()
         );
 
         GameState gameState = gameService.startGame(request);
@@ -103,7 +108,8 @@ class GameServiceStartGameTest {
                 Arrays.asList("player1", "player2"),
                 null,
                 new HashMap<>(),
-                "defaultDeck"
+                "defaultDeck",
+                Map.of()
         );
 
         GameState gameState = gameService.startGame(request);
