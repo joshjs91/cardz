@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.joshjs.gamangine;
 
 public class Colours {
     // ANSI escape codes

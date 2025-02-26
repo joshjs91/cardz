@@ -13,45 +13,64 @@
 	<description>Game engine for generic game</description>
 
 	<properties>
-		<spring-boot.version>2.7.8</spring-boot.version>  <!-- Specify the Spring Boot version here -->
-		<java.version>18</java.version>  <!-- Specify Java version here -->
+		<spring-boot.version>3.2.2</spring-boot.version> <!-- Latest stable version -->
+		<java.version>18</java.version> <!-- Keeping Java 18 -->
 	</properties>
 
 	<dependencies>
-		<!-- Spring Boot Web Dependency -->
+		<!-- Spring Boot Web -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<version>${spring-boot.version}</version> <!-- Use the version defined earlier -->
+			<version>${spring-boot.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-logging</artifactId>
+			<version>${spring-boot.version}</version>
+		</dependency>
+
+		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.22</version> <!-- Use the latest version -->
+			<version>1.18.30</version>
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+			<version>${spring-boot.version}</version>
+		</dependency>
 
-		<!-- Spring Boot Test Dependency -->
+		<!-- Jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.16.0</version> <!-- Latest version -->
+		</dependency>
+
+		<!-- Spring Boot Test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<version>${spring-boot.version}</version> <!-- Use the version defined earlier -->
+			<version>${spring-boot.version}</version>
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Other dependencies like JUnit for testing -->
+		<!-- JUnit -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
-			<version>5.8.2</version>
+			<version>5.10.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.8.2</version>
+			<version>5.10.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -59,13 +78,12 @@
 
 	<build>
 		<plugins>
-			<!-- Spring Boot plugin for packaging -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot.version}</version>
 			</plugin>
 
-			<!-- Maven Compiler Plugin to use Java 18 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -73,6 +91,9 @@
 				<configuration>
 					<source>18</source>
 					<target>18</target>
+					<compilerArgs>
+						<arg>-parameters</arg>
+					</compilerArgs>
 				</configuration>
 			</plugin>
 		</plugins>

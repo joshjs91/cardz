@@ -196,7 +196,6 @@ class GameServiceExecuteActionTest {
         action.setPlayedCard(new Card("No effects", new ArrayList<>()));
         PlayerActionRequest request = createActionRequest("test-game-10", "player2", action);
 
-        // Check if the action is not allowed when performed by the wrong player
         boolean allowed = gameService.isActionAllowed(state, request);
         assertFalse(allowed, "Action should not be allowed when performed by the wrong player.");
     }

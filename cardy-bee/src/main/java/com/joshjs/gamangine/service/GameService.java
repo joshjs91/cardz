@@ -1,9 +1,6 @@
 package com.joshjs.gamangine.service;
 
 import com.joshjs.gamangine.action.Action;
-import com.joshjs.gamangine.action.DiscardCardAction;
-import com.joshjs.gamangine.action.EndTurnAction;
-import com.joshjs.gamangine.action.PlayCardAction;
 import com.joshjs.gamangine.action.model.PendingAction;
 import com.joshjs.gamangine.card.DeckFactory;
 import com.joshjs.gamangine.game.GameConfig;
@@ -91,7 +88,7 @@ class GameService {
             if (!state.getPendingActions().isEmpty()) {
                 PendingAction pending = state.getPendingActions().peek();
                 if (playerMatchesNextPendingActionPlayer(pending.getPlayer(), actionRequest) &&
-                        actionMatchesNextAvailableAction(pending.getAction(), actionRequest.getAction())) {
+                        actionMatchesAvailablePlayerAction(pending.getAction(), actionRequest.getAction())) {
                     state.getPendingActions().poll();
                 }
             }
@@ -109,18 +106,17 @@ class GameService {
         // Check if the action is the next pending action
         if (!state.getPendingActions().isEmpty()) {
             PendingAction pending = state.getPendingActions().peek();
-            if (!playerMatchesNextPendingActionPlayer(pending.getPlayer(), actionRequest) || !actionMatchesNextAvailableAction(pending.getAction(), actionRequest.getAction())) {
+            if (!playerMatchesNextPendingActionPlayer(pending.getPlayer(), actionRequest) || !actionMatchesAvailablePlayerAction(pending.getAction(), actionRequest.getAction())) {
                 return false;
             }
         }
 
-        // Check if the action is allowed for the player
         return state.getPlayerAvailableActions().getOrDefault(actionRequest.playerId, Collections.emptyList())
                 .stream()
-                .anyMatch(availablePlayerAction -> actionMatchesNextAvailableAction(availablePlayerAction, actionRequest.getAction()));
+                .anyMatch(availablePlayerAction -> actionMatchesAvailablePlayerAction(availablePlayerAction, actionRequest.getAction()));
     }
 
-    private boolean actionMatchesNextAvailableAction(Action allowedOrPendingAction, Action actionRequest) {
+    private boolean actionMatchesAvailablePlayerAction(Action allowedOrPendingAction, Action actionRequest) {
         return allowedOrPendingAction.getClass().equals(actionRequest.getClass());
     }
 
@@ -130,7 +126,7 @@ class GameService {
 
     public void updatePlayerActions(GameState state, PlayerActionRequest actionRequest) {
         List<Action> updatedActions = new ArrayList<>(state.getPlayerAvailableActions().get(actionRequest.playerId));
-        updatedActions.removeIf(action -> actionMatchesNextAvailableAction(action, actionRequest.getAction()));
+        updatedActions.removeIf(action -> actionMatchesAvailablePlayerAction(action, actionRequest.getAction()));
         state.getPlayerAvailableActions().put(actionRequest.playerId, updatedActions);
     }
 

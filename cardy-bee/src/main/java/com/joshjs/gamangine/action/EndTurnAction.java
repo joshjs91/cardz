@@ -33,8 +33,6 @@ public class EndTurnAction extends BaseAction {
         state.setCurrentPlayer(state.getPlayers().get((currentIndex + 1) % state.getPlayers().size()));
 
         // Assign available actions for the new player
-//        dfggfggnyeh think about default turn change
-//       make a on turn change?
         //TODO there should be a default set of actions somewhere the the turn ends
         List<Action> newActions = List.of(new PlayCardAction(), new EndTurnAction());
         state.getPlayerAvailableActions().put(state.getCurrentPlayer(), newActions);

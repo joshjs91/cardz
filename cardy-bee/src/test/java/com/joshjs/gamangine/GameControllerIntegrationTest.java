@@ -42,8 +42,8 @@ public class GameControllerIntegrationTest {
                     runAction(gameState.getGameId(), player, action);
 
                 runAction(gameState.getGameId(), player, new EndTurnAction());
-                gameState = getGame(gameState.getGameId());
             }
+            gameState = getGame(gameState.getGameId());
         }
         GameState finalGameState = getGame(gameState.getGameId());
         assertThat(finalGameState.isGameEnded()).isEqualTo(true);
@@ -76,10 +76,6 @@ public class GameControllerIntegrationTest {
     }
 
     private GameState getGame(String gameId) {
-        // Create headers to set the Content-Type
-        // Create an empty HttpEntity with the headers
-
-        // Perform a POST request with the appropriate headers
         ResponseEntity<GameState> response = template.getForEntity("/game/state/" + gameId, GameState.class);
         System.out.println("Response: " + response.getBody());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

@@ -7,12 +7,15 @@ import com.joshjs.gamangine.model.dto.GameSetupRequest;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import com.joshjs.gamangine.service.GameService;
+import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/game")
+@Validated
 public class GameController {
 
     private final GameService gameService;
@@ -22,7 +25,8 @@ public class GameController {
     }
 
     @PostMapping("/start")
-    public GameState startGame(@RequestBody GameSetupRequest request) {
+    public GameState startGame(@Valid @RequestBody GameSetupRequest request) {
+        System.out.println("Received request: "+ request);
         return gameService.startGame(request);
     }
 
@@ -32,7 +36,7 @@ public class GameController {
     }
 
     @PostMapping("/action")
-    public GameState performAction(@RequestBody PlayerActionRequest action) {
+    public GameState performAction(@Valid @RequestBody PlayerActionRequest action) {
         return gameService.executeAction(action);
     }
 
