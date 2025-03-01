@@ -9,7 +9,9 @@ import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @JsonTypeName("DiscardCardEffect")
@@ -24,6 +26,11 @@ public class DiscardCardEffect implements CardEffect {
         HashMap<String, String> requiredInputs = new HashMap<>();
         requiredInputs.put("targetPlayer", "String");
         return requiredInputs;
+    }
+
+    @Override
+    public List<String> getFixedAttributes() {
+        return new ArrayList<>();
     }
 
     @Override

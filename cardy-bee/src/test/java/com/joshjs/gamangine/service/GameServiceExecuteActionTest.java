@@ -3,6 +3,7 @@ package com.joshjs.gamangine.service;
 import com.joshjs.gamangine.action.*;
 import com.joshjs.gamangine.action.model.PendingAction;
 import com.joshjs.gamangine.card.Card;
+import com.joshjs.gamangine.exception.InvalidInputException;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,7 +77,7 @@ class GameServiceExecuteActionTest {
         action.setIsRequired(true);
         PlayerActionRequest request = createActionRequest("test-game-2", "player1", action);
 
-        Exception exception = assertThrows(IllegalStateException.class, () -> gameService.executeAction(request));
+        Exception exception = assertThrows(InvalidInputException.class, () -> gameService.executeAction(request));
 
         String expectedMessage = "Action not allowed";
         String actualMessage = exception.getMessage();

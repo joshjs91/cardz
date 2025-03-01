@@ -20,7 +20,6 @@ public class GameState {
     private Map<String, Map<String, Object>> playerAttributes;
     private String currentPlayer;
     private Map<String, Object> gameAttributes;
-    // TODO should i enforce any pending actions being also available in playable actions??? i already enforce checks on this so probably yes
     // Actions currently available to a user, they may be required or not, and also only actionable given there are no pending actions for other users
     private Map<String, List<Action>> playerAvailableActions= new HashMap<>();
     // Actions required to be done in sequence

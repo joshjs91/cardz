@@ -7,6 +7,7 @@ import com.joshjs.gamangine.model.state.GameState;
 import lombok.Data;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.joshjs.gamangine.validator.UserInputValidator.getNewIntValue;
@@ -30,12 +31,15 @@ public class ModifyPlayerNumberAttributeEffect implements CardEffect {
     @Override
     public Map<String, String> getRequiredInputs() {
         HashMap<String, String> requiredInputs = new HashMap<>();
-        requiredInputs.put("attribute", "String");
         //TODO deal with some set of values somewhere?
-        requiredInputs.put("calculationType", "SOME_SET_OF_VALUES");
         requiredInputs.put("modificationValue", "Integer");
         requiredInputs.put("targetPlayer", "String");
         return requiredInputs;
+    }
+
+    @Override
+    public List<String> getFixedAttributes() {
+        return List.of("calculationType", "attribute");
     }
 
     @Override

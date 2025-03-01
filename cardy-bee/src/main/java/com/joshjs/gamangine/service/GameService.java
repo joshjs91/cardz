@@ -3,6 +3,7 @@ package com.joshjs.gamangine.service;
 import com.joshjs.gamangine.action.Action;
 import com.joshjs.gamangine.action.model.PendingAction;
 import com.joshjs.gamangine.card.DeckFactory;
+import com.joshjs.gamangine.exception.InvalidInputException;
 import com.joshjs.gamangine.game.GameConfig;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.card.Card;
@@ -75,7 +76,7 @@ class GameService {
     public GameState executeAction(PlayerActionRequest actionRequest) {
         GameState state = games.get(actionRequest.gameId);
         if (state == null) {
-            throw new IllegalArgumentException("Invalid game ID");
+            throw new InvalidInputException("Invalid game ID");
         }
 
         System.out.println("Player " + actionRequest.playerId + " is performing action: " + actionRequest.action);
@@ -96,7 +97,7 @@ class GameService {
             // Update the player's available actions in the state
             updatePlayerActions(state, actionRequest);
         } else {
-            throw new IllegalStateException("Action not allowed: " + actionRequest.action);
+            throw new InvalidInputException("Action not allowed: " + actionRequest.action);
         }
 
         return state;
