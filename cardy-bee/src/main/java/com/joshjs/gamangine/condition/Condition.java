@@ -12,7 +12,8 @@ import java.util.Map;
         property = "type"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = CardsAllPlayedCondition.class, name = "CardsAllPlayedCondition"),
+        @JsonSubTypes.Type(value = AllPlayersHaveNoCardsInHandCondition.class, name = "AllPlayersHaveNoCardsInHandCondition"),
+        @JsonSubTypes.Type(value = PlayerHasNoCardsInHandCondition.class, name = "PlayerHasNoCardsInHandCondition"),
         @JsonSubTypes.Type(value = GameNumberAttributeCondition.class, name = "GameNumberAttributeCondition"),
 })
 public interface Condition {

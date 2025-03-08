@@ -21,7 +21,8 @@ class GameServiceStartGameTest {
                 Arrays.asList("player1", "player2"),
                 null,
                 Map.of("attribute1", 10),
-                "defaultDeck",
+                "default",
+                "default",
                 Map.of()
         );
 
@@ -43,6 +44,7 @@ class GameServiceStartGameTest {
                 null,
                 Map.of("attribute1", 10),
                 "defaultDeck",
+                "default",
                 Map.of()
         );
 
@@ -57,6 +59,7 @@ class GameServiceStartGameTest {
                 null,
                 new HashMap<>(),
                 "complex",
+                "default",
                 Map.of()
         );
 
@@ -74,6 +77,7 @@ class GameServiceStartGameTest {
                 null,
                 new HashMap<>(),
                 "defaultDeck",
+                "default",
                 Map.of()
         );
 
@@ -91,6 +95,7 @@ class GameServiceStartGameTest {
                 null,
                 new HashMap<>(),
                 "defaultDeck",
+                "default",
                 Map.of()
         );
 
@@ -109,6 +114,7 @@ class GameServiceStartGameTest {
                 null,
                 new HashMap<>(),
                 "defaultDeck",
+                "default",
                 Map.of()
         );
 

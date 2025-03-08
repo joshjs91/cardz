@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +22,11 @@ public class ModifyPlayerNumberAttributeEffect implements CardEffect {
     private Integer modificationValue;
 
     @JsonProperty("calculationType")
+    @NotBlank
     private String calculationType;
 
     @JsonProperty("attribute")
+    @NotBlank
     private String attribute;
 
     @JsonProperty("targetPlayer")
@@ -39,7 +43,7 @@ public class ModifyPlayerNumberAttributeEffect implements CardEffect {
 
     @Override
     public List<String> getFixedAttributes() {
-        return List.of("calculationType", "attribute");
+        return new ArrayList<>(List.of("calculationType", "attribute"));
     }
 
     @Override

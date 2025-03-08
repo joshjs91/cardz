@@ -4,16 +4,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.joshjs.gamangine.validator.UserInputValidator.getNewIntValue;
 
-//TODO need to figure how to add attributes to a card....i.e. field to modify or colour or number...?
-// maybe a hack could be to check non null attributes equal on the card as well as in played card...? or final attributes?
 @JsonTypeName("ModifyGameAttributeEffect")
 @Data
 public class ModifyGameNumberAttributeEffect implements CardEffect {
@@ -23,9 +24,11 @@ public class ModifyGameNumberAttributeEffect implements CardEffect {
     private Integer modificationValue;
 
     @JsonProperty("calculationType")
+    @NotBlank
     private String calculationType;
 
     @JsonProperty("attribute")
+    @NotBlank
     private String attribute;
 
     //TODO check these come back in the response of game state - needs to be visible...
@@ -39,7 +42,7 @@ public class ModifyGameNumberAttributeEffect implements CardEffect {
     //TODO check these come back in the response of game state - needs to be visible...
     @Override
     public List<String> getFixedAttributes() {
-        return List.of("calculationType", "attribute");
+        return new ArrayList<>(List.of("calculationType", "attribute"));
     }
 
     @Override

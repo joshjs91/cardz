@@ -3,7 +3,6 @@ package com.joshjs.gamangine.action;
 import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.card.effects.CardEffect;
 import com.joshjs.gamangine.card.effects.ModifyGameNumberAttributeEffect;
-import com.joshjs.gamangine.card.effects.UnoEffect;
 import com.joshjs.gamangine.card.effects.UselessEffect;
 import com.joshjs.gamangine.exception.InvalidInputException;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
@@ -52,6 +51,8 @@ class PlayCardActionTest {
         effectOfCardInHand.setAttribute("tokens");
         Card cardInHand = new Card("Attack", List.of(effectOfCardInHand));
         gameState.getPlayerHands().get(playerId).add(cardInHand);
+        assertTrue(gameState.getPlayerHands().get(playerId).contains(cardInHand), "Card should be in hand");
+
         ModifyGameNumberAttributeEffect effectOfCardPlayed = new ModifyGameNumberAttributeEffect();
         effectOfCardPlayed.setCalculationType("add");
         effectOfCardPlayed.setAttribute("tokens");
@@ -133,7 +134,7 @@ class PlayCardActionTest {
         effectOfCardInHand.setAttribute("tokens");
         Card cardInHand = new Card("Attack", List.of(effectOfCardInHand));
         gameState.getPlayerHands().get(playerId).add(cardInHand);
-
+        assertTrue(gameState.getPlayerHands().get(playerId).contains(cardInHand), "Card should be in hand");
         ModifyGameNumberAttributeEffect effectOfCardPlayed = new ModifyGameNumberAttributeEffect();
         effectOfCardPlayed.setCalculationType("minus");
         effectOfCardPlayed.setAttribute("tokens");

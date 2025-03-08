@@ -36,14 +36,7 @@ class GameServiceExecuteActionTest {
             playerHands.put(player, hand);
         }
         state.setPlayerHands(playerHands);
-
-        List<Action> actions = new ArrayList<>();
-        actions.add(new PlayCardAction());
-        BaseAction action = new EndTurnAction();
-        action.setIsRequired(true);
-        actions.add(action);
-        state.getPlayerAvailableActions().put("player1", actions);
-
+        state.addActionsToPlayer("player1", List.of(new EndTurnAction(), new PlayCardAction()));
         gameService.games.put(gameId, state);
         return state;
     }
@@ -59,6 +52,7 @@ class GameServiceExecuteActionTest {
     @Test
     void testExecuteActionAllowed() {
         GameState state = createNewGame("test-game-1");
+        state.setPendingActions(new LinkedList<>());
         PlayCardAction action = new PlayCardAction();
         action.setPlayedCard(new Card("No effects", new ArrayList<>()));
         PlayerActionRequest request = createActionRequest("test-game-1", "player1", action);
@@ -74,7 +68,6 @@ class GameServiceExecuteActionTest {
     void testExecuteActionNotAllowed() {
         GameState state = createNewGame("test-game-2");
         DiscardCardAction action = new DiscardCardAction();
-        action.setIsRequired(true);
         PlayerActionRequest request = createActionRequest("test-game-2", "player1", action);
 
         Exception exception = assertThrows(InvalidInputException.class, () -> gameService.executeAction(request));
@@ -87,7 +80,7 @@ class GameServiceExecuteActionTest {
     @Test
     void testExecuteActionWithPendingAction() {
         GameState state = createNewGame("test-game-3");
-        state.getPendingActions().add(new PendingAction("player1", new PlayCardAction()));
+        state.addPendingActions(new PendingAction("player1", new PlayCardAction()));
 
         PlayCardAction action = new PlayCardAction();
         action.setPlayedCard(new Card("No effects", new ArrayList<>()));
@@ -104,7 +97,7 @@ class GameServiceExecuteActionTest {
     @Test
     void testIsActionAllowedWithPendingAction() {
         GameState state = createNewGame("test-game-4");
-        state.getPendingActions().add(new PendingAction("player1", new PlayCardAction()));
+        state.addPendingActions(new PendingAction("player1", new PlayCardAction()));
 
         PlayerActionRequest request = createActionRequest("test-game-4", "player1", new PlayCardAction());
         boolean allowed = gameService.isActionAllowed(state, request);
@@ -136,7 +129,7 @@ class GameServiceExecuteActionTest {
     @Test
     void testIsActionAllowedWhenNoPendingActionsAndInAllowedList() {
         GameState state = createNewGame("test-game-7");
-
+        state.setPendingActions(new LinkedList<>());
         PlayCardAction action = new PlayCardAction();
         action.setPlayedCard(new Card("No effects", new ArrayList<>()));
         PlayerActionRequest request = createActionRequest("test-game-7", "player1", action);
@@ -155,7 +148,7 @@ class GameServiceExecuteActionTest {
         GameState state = createNewGame("test-game-8");
 
         // Add a pending action for a different action type (e.g., EndTurnAction)
-        state.getPendingActions().add(new PendingAction("player1", new EndTurnAction()));
+        state.addPendingActions(new PendingAction("player1", new EndTurnAction()));
 
         // Create a PlayCardAction as the user's action
         PlayCardAction action = new PlayCardAction();
@@ -173,7 +166,7 @@ class GameServiceExecuteActionTest {
 
         // Add a matching pending action
         PlayCardAction pendingAction = new PlayCardAction();
-        state.getPendingActions().add(new PendingAction("player1", pendingAction));
+        state.addPendingActions(new PendingAction("player1", pendingAction));
 
         // Create a matching PlayCardAction
         PlayCardAction action = new PlayCardAction();
@@ -190,7 +183,7 @@ class GameServiceExecuteActionTest {
         GameState state = createNewGame("test-game-10");
 
         // Add a pending action for player1
-        state.getPendingActions().add(new PendingAction("player1", new EndTurnAction()));
+        state.addPendingActions(new PendingAction("player1", new EndTurnAction()));
 
         // Create an action performed by player2
         PlayCardAction action = new PlayCardAction();
@@ -206,7 +199,7 @@ class GameServiceExecuteActionTest {
         GameState state = createNewGame("test-game-12");
 
         // Remove all actions from player's available actions
-        state.getPlayerAvailableActions().get("player1").clear();
+        state.removePlayersActions("player1");
 
         // Create an action
         PlayCardAction action = new PlayCardAction();

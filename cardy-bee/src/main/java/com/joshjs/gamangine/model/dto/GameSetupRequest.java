@@ -25,8 +25,11 @@ public class GameSetupRequest {
 
     private Map<String, Object> gameAttributes;
 
-    @NotBlank(message = "deckType must not be empty")  // Use @NotBlank instead of @NotNull
+    @NotBlank(message = "deckType must not be empty")
     private String deckType;
+
+    @NotBlank(message = "gameType must not be empty")
+    private String gameType;
 
     private Map<String, Map<String, Object>> playerAttributes;
 }

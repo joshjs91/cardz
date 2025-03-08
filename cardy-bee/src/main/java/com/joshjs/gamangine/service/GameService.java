@@ -2,9 +2,9 @@ package com.joshjs.gamangine.service;
 
 import com.joshjs.gamangine.action.Action;
 import com.joshjs.gamangine.action.model.PendingAction;
-import com.joshjs.gamangine.card.DeckFactory;
+import com.joshjs.gamangine.factory.DeckFactory;
 import com.joshjs.gamangine.exception.InvalidInputException;
-import com.joshjs.gamangine.game.GameConfig;
+import com.joshjs.gamangine.factory.GameFactory;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.model.dto.GameSetupRequest;
@@ -52,11 +52,11 @@ class GameService {
 
         for (String player : playerIds) {
             state.getPlayerAttributes().put(player, new HashMap<>());
-            state.getPlayerHands().put(player, drawCards(state.getDrawDeck(), 5));
+            state.drawCardsFromGameDeck(player, 5);
             if (player == state.getCurrentPlayer()) {
-                state.getPlayerAvailableActions().put(state.getCurrentPlayer(), GameConfig.genericTurnActions());
+                state.addActionsToPlayer(player, GameFactory.getChangeTurnActions(request.getGameType()));
             } else {
-                state.getPlayerAvailableActions().put(player, new ArrayList<>());
+                state.removePlayersActions(player);
             }
         }
 
@@ -105,13 +105,12 @@ class GameService {
 
     public boolean isActionAllowed(GameState state, PlayerActionRequest actionRequest) {
         // Check if the action is the next pending action
-        if (!state.getPendingActions().isEmpty()) {
+        if (!(state.getPendingActions() == null || state.getPendingActions().isEmpty())) {
             PendingAction pending = state.getPendingActions().peek();
             if (!playerMatchesNextPendingActionPlayer(pending.getPlayer(), actionRequest) || !actionMatchesAvailablePlayerAction(pending.getAction(), actionRequest.getAction())) {
                 return false;
             }
         }
-
         return state.getPlayerAvailableActions().getOrDefault(actionRequest.playerId, Collections.emptyList())
                 .stream()
                 .anyMatch(availablePlayerAction -> actionMatchesAvailablePlayerAction(availablePlayerAction, actionRequest.getAction()));

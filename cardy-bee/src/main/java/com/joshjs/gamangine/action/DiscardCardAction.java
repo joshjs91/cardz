@@ -8,6 +8,7 @@ import com.joshjs.gamangine.model.state.GameState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,9 @@ public class DiscardCardAction extends BaseAction {
 
     @JsonProperty("cardName")
     private String cardName;
+
+    @JsonProperty("cardsToDiscard")
+    private Integer cardsToDiscard;
 
     @Override
     public void execute(GameState state, PlayerActionRequest action) {
@@ -40,11 +44,10 @@ public class DiscardCardAction extends BaseAction {
     }
 
     @Override
-    public Boolean isRequired() {
-        return null;
+    public List<String> getFixedAttributes() {
+        return new ArrayList<>(List.of("cardsToDiscard"));
     }
 
-    //TODO this could be put into some card helper class
     public static <T> T removeIf(List<T> list, Predicate<T> condition) {
         for (T element : list) {
             if (condition.test(element)) {

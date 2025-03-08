@@ -28,7 +28,7 @@ public class ControllerExceptionHandler {
         @ExceptionHandler(InvalidInputException.class)
         public ResponseEntity<Map<String, String>> handleInvalidInputException(InvalidInputException ex) {
                 Map<String, String> errorResponse = new HashMap<>();
-                errorResponse.put("error", "Invalid input");
+                errorResponse.put("error", "Invalid input: ");
                 errorResponse.put("details", ex.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }

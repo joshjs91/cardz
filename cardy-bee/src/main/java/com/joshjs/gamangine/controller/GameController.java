@@ -1,6 +1,6 @@
 package com.joshjs.gamangine.controller;
 
-import com.joshjs.gamangine.condition.CardsAllPlayedCondition;
+import com.joshjs.gamangine.condition.AllPlayersHaveNoCardsInHandCondition;
 import com.joshjs.gamangine.condition.Condition;
 import com.joshjs.gamangine.condition.GameNumberAttributeCondition;
 import com.joshjs.gamangine.model.dto.GameSetupRequest;
@@ -32,7 +32,7 @@ public class GameController {
 
     @GetMapping("/conditions")
     public List<Condition> performAction() {
-        return List.of(new CardsAllPlayedCondition(), new GameNumberAttributeCondition());
+        return List.of(new AllPlayersHaveNoCardsInHandCondition(), new GameNumberAttributeCondition());
     }
 
     @PostMapping("/action")
