@@ -2,10 +2,10 @@ package com.joshjs.gamangine.card.effects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -35,18 +35,11 @@ public class ModifyGameNumberAttributeEffect implements CardEffect {
     @Override
     public Map<String, String> getRequiredInputs() {
         HashMap<String, String> requiredInputs = new HashMap<>();
-        requiredInputs.put("modificationValue", "Integer");
         return requiredInputs;
     }
 
-    //TODO check these come back in the response of game state - needs to be visible...
     @Override
-    public List<String> getFixedAttributes() {
-        return new ArrayList<>(List.of("calculationType", "attribute"));
-    }
-
-    @Override
-    public void applyEffect(GameState state, PlayerActionRequest action) {
+    public void applyEffect(GameState state, PlayerActionRequest action, Card card) {
         //TODO need to deal with the game attribute not existing here or not being an Integer
         Integer currentValue = (Integer) state.getGameAttributes().get(attribute);
         Integer newValue = getNewIntValue(currentValue, calculationType, modificationValue);

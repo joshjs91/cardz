@@ -7,6 +7,8 @@ import com.joshjs.gamangine.action.PlayCardAction;
 import com.joshjs.gamangine.action.spanish41.DrawCardAction;
 import com.joshjs.gamangine.action.spanish41.PlaySpanish41CardAction;
 import com.joshjs.gamangine.card.Card;
+import com.joshjs.gamangine.card.ColourCard;
+import com.joshjs.gamangine.card.NumberAndColourCard;
 import com.joshjs.gamangine.card.effects.spanish41.Spanish41BaseEffect;
 import com.joshjs.gamangine.card.effects.spanish41.Spanish41DrawCardEffect;
 import com.joshjs.gamangine.condition.AllPlayersHaveNoCardsInHandCondition;
@@ -59,6 +61,7 @@ public class GameControllerIntegrationTest {
         GameState finalGameState = getGame(gameState.getGameId());
         assertThat(finalGameState.isGameEnded()).isEqualTo(true);
     }
+
     @Test
     public void testSpanish41Actions() {
         // Initialize players
@@ -94,6 +97,7 @@ public class GameControllerIntegrationTest {
         // Check final game state
         GameState finalGameState = getGame(gameState.getGameId());
         assertThat(finalGameState.isGameEnded()).isEqualTo(true);
+        //TODO check that no actions exist
     }
 
     private void drawXCards(String player2, GameState gameState, int cardsToDraw) {
@@ -102,21 +106,19 @@ public class GameControllerIntegrationTest {
         runAction(gameState.getGameId(), player2, action);
     }
 
+    //TODO i dont think it selects
     private void playDraw2Card(String player1, GameState gameState) {
         PlaySpanish41CardAction action9 = new PlaySpanish41CardAction();
         Spanish41DrawCardEffect drawEffect = new Spanish41DrawCardEffect();
         drawEffect.setCardsToDraw(2);
-        drawEffect.setColour("green");
-        action9.setPlayedCard(new Card("Draw 2", List.of(drawEffect)));
+        action9.setPlayedCard(new ColourCard("Draw 2", "green", List.of(drawEffect)));
         runAction(gameState.getGameId(), player1, action9);
     }
 
     private void playSpanish41Card(GameState gameState, String player, String colour, Integer number) {
         PlaySpanish41CardAction action1 = new PlaySpanish41CardAction();
         Spanish41BaseEffect effect = new Spanish41BaseEffect();
-        effect.setNumber(number);
-        effect.setColour(colour);
-        Card card = new Card(number + " " + colour, new ArrayList<>(List.of(effect)));
+        Card card = new NumberAndColourCard(number + " " + colour, colour, number, new ArrayList<>(List.of(effect)));
         action1.setPlayedCard(card);
         runAction(gameState.getGameId(), player, action1);
     }
@@ -160,17 +162,7 @@ public class GameControllerIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<PlayerActionRequest> playerActionRequest = new HttpEntity<>(new PlayerActionRequest(gameId, player, action), headers);
-
-//        // Use Jackson's ObjectMapper to serialize the request and print it
-//        try {
-//            String requestBody = new ObjectMapper().writeValueAsString(playerActionRequest);
-//            System.out.println("Request Body: " + requestBody);
-//        } catch (Exception e) {
-//            System.err.println("Error serializing request body: " + e.getMessage());
-//        }
-
-        // Perform a POST request and handle unexpected responses
+        HttpEntity<PlayerActionRequest> playerActionRequest = new HttpEntity<>(new PlayerActionRequest(gameId, player, action, new HashMap<>()), headers);
 
         ResponseEntity<String> response = template.exchange("/game/action", HttpMethod.POST, playerActionRequest, String.class);
 

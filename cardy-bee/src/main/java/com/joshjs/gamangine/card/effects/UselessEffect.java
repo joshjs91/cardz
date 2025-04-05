@@ -1,6 +1,7 @@
 package com.joshjs.gamangine.card.effects;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import lombok.Data;
@@ -19,12 +20,7 @@ public class UselessEffect implements CardEffect {
     }
 
     @Override
-    public List<String> getFixedAttributes() {
-        return List.of();
-    }
-
-    @Override
-    public void applyEffect(GameState state, PlayerActionRequest action) {
+    public void applyEffect(GameState state, PlayerActionRequest action, Card card) {
 
     }
 }

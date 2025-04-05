@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,4 +24,6 @@ public class PlayerActionRequest {
 
 //    @NotNull(message = "action must not be null")
     public Action action;
+
+    public Map<String, Object> inputs;
 }

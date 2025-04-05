@@ -6,10 +6,12 @@ Games to handle:
 Features:
 
 
-- resolve the game ending as an attribute - done
-- convert actionHanlders to work the same way as effects i.e. can remove PlayerAction its a redundant wrapper. there is only ever one handler per action as well - done
-- change it so their are card types and the attributes are on there i.e. colour
+- add winner to gamestate using condition function inside game condition that tells you who won.
+    - could possibly make it so that the winner is calculated a different way to how the game is ended. means you could mix winning and game type
 - make DTOs instead of passing around the real game state - todo
 - handle cards only visible to certain users - todo
 - make it so that the card is provided as an attribute of an action opposed to just a random attribute i need to validate - done (a while ago)
 - make it so for discard card effect, it allows you to provide how many cards are discarded. - todo
+- resolve the game ending as an attribute - done
+- convert actionHanlders to work the same way as effects i.e. can remove PlayerAction its a redundant wrapper. there is only ever one handler per action as well - done
+- change it so their are card types and the attributes are on there i.e. colour - done

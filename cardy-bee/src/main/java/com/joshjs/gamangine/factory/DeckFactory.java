@@ -1,6 +1,8 @@
 package com.joshjs.gamangine.factory;
 
 import com.joshjs.gamangine.card.Card;
+import com.joshjs.gamangine.card.ColourCard;
+import com.joshjs.gamangine.card.NumberAndColourCard;
 import com.joshjs.gamangine.card.effects.DiscardCardEffect;
 import com.joshjs.gamangine.card.effects.ModifyGameNumberAttributeEffect;
 import com.joshjs.gamangine.card.effects.spanish41.Spanish41BaseEffect;
@@ -57,22 +59,10 @@ public class DeckFactory {
     private static List<Card> generateSpanish41Deck() {
         List<Card> deck = new ArrayList<>();
         for (int number = 0; number < 10; number++) {
-            Spanish41BaseEffect blueSpanishEffect = new Spanish41BaseEffect();
-            blueSpanishEffect.setColour("blue");
-            blueSpanishEffect.setNumber(number);
-            Spanish41BaseEffect redeSpanishEffect = new Spanish41BaseEffect();
-            redeSpanishEffect.setColour("red");
-            redeSpanishEffect.setNumber(number);
-            Spanish41BaseEffect greenSpanishEffect = new Spanish41BaseEffect();
-            greenSpanishEffect.setColour("green");
-            greenSpanishEffect.setNumber(number);
-            Spanish41BaseEffect yellowSpanishEffect = new Spanish41BaseEffect();
-            yellowSpanishEffect.setColour("yellow");
-            yellowSpanishEffect.setNumber(number);
-            deck.add(new Card(number + " blue", List.of(blueSpanishEffect)));
-            deck.add(new Card(number + " red", List.of(redeSpanishEffect)));
-            deck.add(new Card(number + " green", List.of(greenSpanishEffect)));
-            deck.add(new Card(number + " yellow", List.of(yellowSpanishEffect)));
+            deck.add(new NumberAndColourCard("some spanish41 card", " blue", number, List.of(new Spanish41BaseEffect())));
+            deck.add(new NumberAndColourCard("some spanish41 card", " red", number, List.of(new Spanish41BaseEffect())));
+            deck.add(new NumberAndColourCard("some spanish41 card", " green", number, List.of(new Spanish41BaseEffect())));
+            deck.add(new NumberAndColourCard("some spanish41 card", " yellow",number, List.of(new Spanish41BaseEffect())));
             Spanish41DrawCardEffect drawSpanishEffect = new Spanish41DrawCardEffect();
             drawSpanishEffect.setCardsToDraw(4);
             deck.add(new Card("Draw 4", List.of(drawSpanishEffect)));
@@ -85,62 +75,37 @@ public class DeckFactory {
         List<Card> deck = new ArrayList<>();
 
         // Define base effects with correct numbers
-        Spanish41BaseEffect blueSpanishEffect1 = new Spanish41BaseEffect();
-        blueSpanishEffect1.setColour("blue");
-        blueSpanishEffect1.setNumber(1);
+        Card blue1 = new NumberAndColourCard("1 blue", "blue", 1, List.of(new Spanish41BaseEffect()));
+        Card red1 = new NumberAndColourCard("1 red", "red", 1, List.of(new Spanish41BaseEffect()));
+        Card green1 = new NumberAndColourCard("1 green", "green", 1, List.of(new Spanish41BaseEffect()));
 
-        Spanish41BaseEffect redSpanishEffect1 = new Spanish41BaseEffect();
-        redSpanishEffect1.setColour("red");
-        redSpanishEffect1.setNumber(1);
-
-        Spanish41BaseEffect greenSpanishEffect1 = new Spanish41BaseEffect();
-        greenSpanishEffect1.setColour("green");
-        greenSpanishEffect1.setNumber(1);
-
-        Spanish41BaseEffect yellowSpanishEffect1 = new Spanish41BaseEffect();
-        yellowSpanishEffect1.setColour("yellow");
-        yellowSpanishEffect1.setNumber(1);
-
-        // Define base effects with number 2
-        Spanish41BaseEffect blueSpanishEffect2 = new Spanish41BaseEffect();
-        blueSpanishEffect2.setColour("blue");
-        blueSpanishEffect2.setNumber(2);
-
-        Spanish41BaseEffect redSpanishEffect2 = new Spanish41BaseEffect();
-        redSpanishEffect2.setColour("red");
-        redSpanishEffect2.setNumber(2);
-
-        Spanish41BaseEffect greenSpanishEffect2 = new Spanish41BaseEffect();
-        greenSpanishEffect2.setColour("green");
-        greenSpanishEffect2.setNumber(2);
-
-        Spanish41BaseEffect yellowSpanishEffect2 = new Spanish41BaseEffect();
-        yellowSpanishEffect2.setColour("yellow");
-        yellowSpanishEffect2.setNumber(2);
+        Card red2 = new NumberAndColourCard("2 red", "red", 2, List.of(new Spanish41BaseEffect()));
+        Card green2 = new NumberAndColourCard("2 green", "green", 2, List.of(new Spanish41BaseEffect()));
+        Card yellow2 = new NumberAndColourCard("2 yellow", "yellow", 2, List.of(new Spanish41BaseEffect()));
 
         // Draw effect
         Spanish41DrawCardEffect drawSpanishEffect = new Spanish41DrawCardEffect();
         drawSpanishEffect.setCardsToDraw(2);
 
         // Add cards with appropriate effects
-        deck.add(new Card("1 blue", List.of(blueSpanishEffect1)));
-        deck.add(new Card("1 green", List.of(greenSpanishEffect1)));
-        deck.add(new Card("2 yellow", List.of(yellowSpanishEffect2)));
-        deck.add(new Card("Draw 2", List.of(drawSpanishEffect)));
-        deck.add(new Card("2 red", List.of(redSpanishEffect2)));
-        deck.add(new Card("Draw 2", List.of(drawSpanishEffect)));
-        deck.add(new Card("2 red", List.of(redSpanishEffect2)));
-        deck.add(new Card("2 green", List.of(greenSpanishEffect2)));
-        deck.add(new Card("2 red", List.of(redSpanishEffect2)));
-        deck.add(new Card("2 red", List.of(redSpanishEffect2)));
-        deck.add(new Card("2 red", List.of(redSpanishEffect2)));
-        deck.add(new Card("1 red", List.of(redSpanishEffect1)));
-        deck.add(new Card("1 blue", List.of(blueSpanishEffect1)));
-        deck.add(new Card("2 yellow", List.of(yellowSpanishEffect2)));
-        deck.add(new Card("2 yellow", List.of(yellowSpanishEffect2)));
-        deck.add(new Card("2 yellow", List.of(yellowSpanishEffect2)));
-        deck.add(new Card("2 yellow", List.of(yellowSpanishEffect2)));
-        deck.add(new Card("2 yellow", List.of(yellowSpanishEffect2)));
+        deck.add(blue1);
+        deck.add(green1);
+        deck.add(yellow2);
+        deck.add(new ColourCard("Draw 2", "green", List.of(drawSpanishEffect)));
+        deck.add(red2);
+        deck.add(new ColourCard("Draw 2", "green", List.of(drawSpanishEffect)));
+        deck.add(red2);
+        deck.add(green2);
+        deck.add(red2);
+        deck.add(red2);
+        deck.add(red2);
+        deck.add(red1);
+        deck.add(blue1);
+        deck.add(yellow2);
+        deck.add(yellow2);
+        deck.add(yellow2);
+        deck.add(yellow2);
+        deck.add(yellow2);
 
         return deck;
     }

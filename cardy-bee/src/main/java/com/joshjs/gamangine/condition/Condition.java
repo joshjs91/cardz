@@ -15,6 +15,7 @@ import java.util.Map;
         @JsonSubTypes.Type(value = AllPlayersHaveNoCardsInHandCondition.class, name = "AllPlayersHaveNoCardsInHandCondition"),
         @JsonSubTypes.Type(value = PlayerHasNoCardsInHandCondition.class, name = "PlayerHasNoCardsInHandCondition"),
         @JsonSubTypes.Type(value = GameNumberAttributeCondition.class, name = "GameNumberAttributeCondition"),
+        @JsonSubTypes.Type(value = EmptyDeckCondition.class, name = "EmptyDeckCondition"),
 })
 public interface Condition {
     Map<String, String> getRequiredInputs();

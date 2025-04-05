@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.action.model.PendingAction;
 import com.joshjs.gamangine.action.Action;
 import com.joshjs.gamangine.action.DiscardCardAction;
+import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import lombok.Data;
@@ -29,12 +30,7 @@ public class DiscardCardEffect implements CardEffect {
     }
 
     @Override
-    public List<String> getFixedAttributes() {
-        return new ArrayList<>();
-    }
-
-    @Override
-    public void applyEffect(GameState state, PlayerActionRequest action) {
+    public void applyEffect(GameState state, PlayerActionRequest action, Card card) {
         System.out.println("Player " + targetPlayer + " must discard a card.");
 
         //TODO This would just be a reference to a set of actions - dont just create a new object here otherwise i need to set the reauired inputs in multiple places

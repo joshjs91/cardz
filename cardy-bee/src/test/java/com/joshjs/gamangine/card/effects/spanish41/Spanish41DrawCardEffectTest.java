@@ -1,11 +1,10 @@
 package com.joshjs.gamangine.card.effects.spanish41;
 
 import com.joshjs.gamangine.action.spanish41.DrawCardAction;
-import com.joshjs.gamangine.card.Card;
-import com.joshjs.gamangine.card.effects.UselessEffect;
+import com.joshjs.gamangine.model.state.GameState;
+import com.joshjs.gamangine.card.effects.spanish41.Spanish41DrawCardEffect;
 import com.joshjs.gamangine.exception.InvalidInputException;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
-import com.joshjs.gamangine.model.state.GameState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,154 +17,77 @@ class Spanish41DrawCardEffectTest {
     private GameState gameState;
     private PlayerActionRequest actionRequest;
     private String playerId = "player1";
+    private String nextPlayerId = "player2";
 
     @BeforeEach
     void setUp() {
         gameState = new GameState();
 
-        gameState.setPlayers(new ArrayList<>(List.of(playerId, "player2")));
-        gameState.setDiscardPile(new ArrayList<>()); // Ensure discard pile is empty at the start
+        gameState.setPlayers(new ArrayList<>(List.of(playerId, nextPlayerId)));
+        gameState.setDiscardPile(new ArrayList<>());
         gameState.setPlayerAvailableActions(new HashMap<>());
-        gameState.getPlayerAvailableActions().put(playerId, new ArrayList<>()); // Empty action list for player
+        gameState.getPlayerAvailableActions().put(playerId, new ArrayList<>());
 
         actionRequest = new PlayerActionRequest();
         actionRequest.setPlayerId(playerId);
+
+        gameState.setCurrentPlayer(playerId);
     }
 
-    /**
-     * Test: When a new draw card is played and no previous draw card exists
-     * Expected: The game should assign the next player a draw action with the correct number of cards.
-     */
     @Test
-    void testApplyEffect_NewDrawCard_AppliesSuccessfully() {
-        Spanish41DrawCardEffect drawCardEffect = new Spanish41DrawCardEffect();
-        drawCardEffect.setColour("Red");
-        drawCardEffect.setCardsToDraw(2);
-        drawCardEffect.applyEffect(gameState, actionRequest);
+    void applyEffect_noCurrentDrawAction_shouldApplyDrawEffect() {
+        Spanish41DrawCardEffect effect = new Spanish41DrawCardEffect();
+        effect.setCardsToDraw(2);
 
-        List<?> nextActions = gameState.getPlayerAvailableActions().get(gameState.getCurrentPlayer());
+        effect.applyEffect(gameState, actionRequest, null);
 
-        assertTrue(nextActions.stream().anyMatch(action -> action instanceof DrawCardAction), "A new DrawCardAction should be assigned.");
-        assertEquals(2, ((DrawCardAction) nextActions.stream().filter(action -> action instanceof DrawCardAction).findFirst().get()).getCardsToDraw());
+        List<?> newActions = gameState.getPlayerAvailableActions().get(nextPlayerId);
+        assertNotNull(newActions);
+        assertTrue(newActions.stream().anyMatch(a -> a instanceof DrawCardAction));
+
+        DrawCardAction drawAction = (DrawCardAction) newActions.stream()
+                .filter(a -> a instanceof DrawCardAction)
+                .findFirst()
+                .orElseThrow();
+
+        assertEquals(2, drawAction.getCardsToDraw());
     }
 
-    /**
-     * Test: When a player plays a draw card that has a higher draw count than the previous draw card
-     * Expected: The new draw count should be added to the previous, and passed to the next player.
-     */
     @Test
-    void testApplyEffect_CounterPreviousDrawCard_Success() {
-        Spanish41DrawCardEffect previousEffect = new Spanish41DrawCardEffect();
-        previousEffect.setCardsToDraw(2);
-        previousEffect.setColour("Blue");
-        Spanish41DrawCardEffect newEffect = new Spanish41DrawCardEffect();
-        newEffect.setColour("Red");
-        newEffect.setCardsToDraw(4);
+    void applyEffect_withExistingDrawAction_shouldStackEffect() {
+        DrawCardAction existingDraw = new DrawCardAction();
+        existingDraw.setCardsToDraw(2);
+        existingDraw.setRequired(true); // must be required for stacking to work
 
-        gameState.getDiscardPile().add(new Card("Draw Two", List.of(previousEffect))); // Previous draw card exists
-        DrawCardAction drawCardAction = new DrawCardAction();
-        drawCardAction.setCardsToDraw(2);
-        drawCardAction.setRequired(true);
-        gameState.getPlayerAvailableActions().get(playerId).add(drawCardAction); // Player has pending draw action
+        gameState.getPlayerAvailableActions().get(playerId).add(existingDraw);
 
-        newEffect.applyEffect(gameState, actionRequest);
+        Spanish41DrawCardEffect effect = new Spanish41DrawCardEffect();
+        effect.setCardsToDraw(3); // Should stack to 2 + 3 = 5
 
-        List<?> nextActions = gameState.getPlayerAvailableActions().get(gameState.getCurrentPlayer());
+        effect.applyEffect(gameState, actionRequest, null);
 
-        assertTrue(nextActions.stream().anyMatch(action -> action instanceof DrawCardAction), "New DrawCardAction should be assigned.");
-        assertEquals(6, ((DrawCardAction) nextActions.stream().filter(action -> action instanceof DrawCardAction).findFirst().get()).getCardsToDraw());
+        List<?> newActions = gameState.getPlayerAvailableActions().get(nextPlayerId);
+        DrawCardAction drawAction = (DrawCardAction) newActions.stream()
+                .filter(a -> a instanceof DrawCardAction)
+                .findFirst()
+                .orElseThrow();
+
+        assertEquals(5, drawAction.getCardsToDraw());
     }
 
-    /**
-     * Test: When a player tries to counter a previous draw card with a lower-value draw card
-     * Expected: The action should be rejected, throwing an InvalidInputException.
-     */
     @Test
-    void testApplyEffect_InvalidCounterDrawCard_ThrowsException() {
-        Spanish41DrawCardEffect previousEffect = new Spanish41DrawCardEffect();
-        previousEffect.setCardsToDraw(4);
-        previousEffect.setColour("Blue");
-        Spanish41DrawCardEffect weakerEffect = new Spanish41DrawCardEffect(); // Lower draw count
-        weakerEffect.setColour("Red");
-        weakerEffect.setCardsToDraw(2);
+    void applyEffect_withWeakerDrawCard_shouldThrow() {
+        DrawCardAction existingDraw = new DrawCardAction();
+        existingDraw.setCardsToDraw(5);
+        existingDraw.setRequired(true);
 
-        gameState.getDiscardPile().add(new Card("Draw Four", List.of(previousEffect)));
-        DrawCardAction drawCardAction = new DrawCardAction();
-        drawCardAction.setCardsToDraw(4);
-        drawCardAction.setRequired(true);
-        gameState.getPlayerAvailableActions().get(playerId).add(drawCardAction); // Previous draw action exists
+        gameState.getPlayerAvailableActions().get(playerId).add(existingDraw);
 
-        InvalidInputException thrownException = assertThrows(InvalidInputException.class, () -> weakerEffect.applyEffect(gameState, actionRequest));
-        assertEquals("The Spanish41 draw card played can't debuff previous draw+ card. Play another card or draw.", thrownException.getMessage());
-    }
+        Spanish41DrawCardEffect effect = new Spanish41DrawCardEffect();
+        effect.setCardsToDraw(2); // Too weak to cancel or stack
 
-    /**
-     * Test: When a draw card is played on a normal (non-draw) card
-     * Expected: The game should treat it as a new draw card and assign the next player a draw action.
-     */
-    @Test
-    void testApplyEffect_DrawCardAfterNormalCard_AppliesSuccessfully() {
-        Card normalCard = new Card("Number 5", List.of()); // Last played card was not a draw card
-        gameState.getDiscardPile().add(normalCard);
-
-        Spanish41DrawCardEffect newDrawCardEffect = new Spanish41DrawCardEffect();
-        newDrawCardEffect.setCardsToDraw(3);
-        newDrawCardEffect.setColour("Green");
-        newDrawCardEffect.applyEffect(gameState, actionRequest);
-
-        List<?> nextActions = gameState.getPlayerAvailableActions().get(gameState.getCurrentPlayer());
-
-        assertTrue(nextActions.stream().anyMatch(action -> action instanceof DrawCardAction), "New DrawCardAction should be assigned.");
-        assertEquals(3, ((DrawCardAction) nextActions.stream().filter(action -> action instanceof DrawCardAction).findFirst().get()).getCardsToDraw());
-    }
-
-
-    //TODO this is an integration test because it should never happen that a general Playcard action can get this far. Do this next with snap cards
-    /**
-     * Test: When a player is forced to draw and they play a non-draw card
-     * Expected: The game should reject the action, forcing them to draw.
-     */
-    @Test
-    void testApplyEffect_PlayerTriesToAvoidDraw_ThrowsException() {
-        Spanish41DrawCardEffect previousEffect = new Spanish41DrawCardEffect();
-        previousEffect.setColour("Blue");
-        previousEffect.setCardsToDraw(2);
-
-        gameState.getDiscardPile().add(new Card("Draw Two", List.of(previousEffect)));
-        DrawCardAction drawCardAction = new DrawCardAction();
-        drawCardAction.setCardsToDraw(2);
-        drawCardAction.setRequired(true);
-        gameState.getPlayerAvailableActions().get(playerId).add(drawCardAction); // Player needs to draw
-
-        Card nonDrawCard = new Card("Some card", List.of(new UselessEffect())); // Invalid counterplay
-        InvalidInputException thrownException = assertThrows(InvalidInputException.class, () -> nonDrawCard.getEffects().get(0).applyEffect(gameState, actionRequest));
-        assertEquals("The Spanish41 draw card played can't debuff previous draw+ card. Play another card or draw.", thrownException.getMessage());
-    }
-
-    /**
-     * Test: When a draw card is played correctly after another draw card of the same value
-     * Expected: The previous draw count should be stacked onto the new draw count and assigned to the next player.
-     */
-    @Test
-    void testApplyEffect_StackSameValueDrawCards_Success() {
-        Spanish41DrawCardEffect previousEffect = new Spanish41DrawCardEffect();
-        previousEffect.setCardsToDraw(2);
-        previousEffect.setColour("Read");
-        Spanish41DrawCardEffect sameValueEffect = new Spanish41DrawCardEffect();
-        sameValueEffect.setColour("Blue");
-        sameValueEffect.setCardsToDraw(2);
-
-        gameState.getDiscardPile().add(new Card("Draw Two", List.of(previousEffect))); // Previous draw card exists
-        DrawCardAction drawCardAction = new DrawCardAction();
-        drawCardAction.setCardsToDraw(2);
-        drawCardAction.setRequired(true);
-        gameState.getPlayerAvailableActions().get(playerId).add(drawCardAction); // Player has pending draw action
-
-        sameValueEffect.applyEffect(gameState, actionRequest);
-
-        List<?> nextActions = gameState.getPlayerAvailableActions().get(gameState.getCurrentPlayer());
-
-        assertTrue(nextActions.stream().anyMatch(action -> action instanceof DrawCardAction), "New DrawCardAction should be assigned.");
-        assertEquals(4, ((DrawCardAction) nextActions.stream().filter(action -> action instanceof DrawCardAction).findFirst().get()).getCardsToDraw());
+        assertThrows(InvalidInputException.class, () -> {
+            effect.applyEffect(gameState, actionRequest, null);
+        });
     }
 }

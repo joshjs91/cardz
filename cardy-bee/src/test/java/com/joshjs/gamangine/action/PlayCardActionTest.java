@@ -49,6 +49,7 @@ class PlayCardActionTest {
         ModifyGameNumberAttributeEffect effectOfCardInHand = new ModifyGameNumberAttributeEffect();
         effectOfCardInHand.setCalculationType("add");
         effectOfCardInHand.setAttribute("tokens");
+        effectOfCardInHand.setModificationValue(10);
         Card cardInHand = new Card("Attack", List.of(effectOfCardInHand));
         gameState.getPlayerHands().get(playerId).add(cardInHand);
         assertTrue(gameState.getPlayerHands().get(playerId).contains(cardInHand), "Card should be in hand");
@@ -74,7 +75,7 @@ class PlayCardActionTest {
         playCardAction.setPlayedCard(new Card("Attack", List.of(effectOfCardPlayed)));
 
         Exception thrownException = assertThrows(InvalidInputException.class, () -> playCardAction.execute(gameState, actionRequest));
-        assertEquals("Player does not have a valid card named: Attack", thrownException.getMessage());
+        assertEquals("Player does not have an exact matching card: Attack", thrownException.getMessage());
 
     }
 
@@ -88,7 +89,7 @@ class PlayCardActionTest {
         playCardAction.setPlayedCard(new Card("Attack", List.of(effectOfCardPlayed)));
 
         Exception thrownException = assertThrows(InvalidInputException.class, () -> playCardAction.execute(gameState, actionRequest));
-        assertEquals("Player does not have a valid card named: Attack", thrownException.getMessage());
+        assertEquals("Player does not have an exact matching card: Attack", thrownException.getMessage());
     }
 
     @Test
@@ -104,7 +105,7 @@ class PlayCardActionTest {
         playCardAction.setPlayedCard(new Card("Attack", List.of(mock(CardEffect.class))));
 
         Exception thrownException = assertThrows(InvalidInputException.class, () -> playCardAction.execute(gameState, actionRequest));
-        assertEquals("Player has card 'Attack' but with different effect types.", thrownException.getMessage());
+        assertEquals("Player does not have an exact matching card: Attack", thrownException.getMessage());
 
     }
 
@@ -124,7 +125,7 @@ class PlayCardActionTest {
         playCardAction.setPlayedCard(new Card("Attack", List.of(effectOfCardPlayed)));
 
         Exception thrownException = assertThrows(InvalidInputException.class, () -> playCardAction.execute(gameState, actionRequest));
-        assertEquals("Effect attributes were tampered with for card: Attack", thrownException.getMessage());
+        assertEquals("Player does not have an exact matching card: Attack", thrownException.getMessage());
     }
 
     @Test
@@ -132,6 +133,7 @@ class PlayCardActionTest {
         ModifyGameNumberAttributeEffect effectOfCardInHand = new ModifyGameNumberAttributeEffect();
         effectOfCardInHand.setCalculationType("minus");
         effectOfCardInHand.setAttribute("tokens");
+        effectOfCardInHand.setModificationValue(5);
         Card cardInHand = new Card("Attack", List.of(effectOfCardInHand));
         gameState.getPlayerHands().get(playerId).add(cardInHand);
         assertTrue(gameState.getPlayerHands().get(playerId).contains(cardInHand), "Card should be in hand");

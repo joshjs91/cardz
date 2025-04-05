@@ -2,6 +2,7 @@ package com.joshjs.gamangine.card.effects;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.card.effects.spanish41.Spanish41BaseEffect;
 import com.joshjs.gamangine.card.effects.spanish41.Spanish41DrawCardEffect;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
@@ -19,6 +20,5 @@ import java.util.Map;
 })
 public interface CardEffect {
     Map<String, String> getRequiredInputs();
-    List<String> getFixedAttributes();
-    void applyEffect(GameState state, PlayerActionRequest action);
+    void applyEffect(GameState state, PlayerActionRequest action, Card card);
 }

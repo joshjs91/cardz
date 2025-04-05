@@ -3,18 +3,14 @@ package com.joshjs.gamangine.action;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.joshjs.gamangine.card.Card;
-import com.joshjs.gamangine.card.effects.CardEffect;
-import com.joshjs.gamangine.exception.InvalidInputException;
 import com.joshjs.gamangine.model.state.GameState;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static com.joshjs.gamangine.action.validator.ActionValidator.validatePlayedCard;
+import static com.joshjs.gamangine.action.validator.ActionValidator.validatePlayCardActionAndGetCardFromHand;
 
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeName("PlayCardAction")
@@ -38,13 +34,13 @@ public class PlayCardAction extends BaseAction {
 
     @Override
     public void execute(GameState state, PlayerActionRequest action) {
-        Card validCardInHand = validatePlayedCard(state, playedCard, action.playerId);
+        Card validCard = validatePlayCardActionAndGetCardFromHand(state, playedCard, action);
         List<Card> playerHand = state.getPlayerHands().get(action.playerId);
 
         // Remove the valid card and apply effects
-        playerHand.remove(validCardInHand);
+        playerHand.remove(validCard);
         playedCard.applyEffects(state, action);
-        state.getDiscardPile().add(validCardInHand);
+        state.getDiscardPile().add(validCard);
         System.out.println();
     }
 }

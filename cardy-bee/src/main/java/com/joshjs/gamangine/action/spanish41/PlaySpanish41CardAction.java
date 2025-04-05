@@ -2,10 +2,8 @@ package com.joshjs.gamangine.action.spanish41;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.joshjs.gamangine.action.Action;
 import com.joshjs.gamangine.action.BaseAction;
 import com.joshjs.gamangine.card.Card;
-import com.joshjs.gamangine.card.effects.CardEffect;
 import com.joshjs.gamangine.card.effects.spanish41.Spanish41BaseEffect;
 import com.joshjs.gamangine.card.effects.spanish41.Spanish41DrawCardEffect;
 import com.joshjs.gamangine.exception.InvalidInputException;
@@ -14,11 +12,9 @@ import com.joshjs.gamangine.model.state.GameState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static com.joshjs.gamangine.action.validator.ActionValidator.validatePlayedCard;
+import static com.joshjs.gamangine.action.validator.ActionValidator.validatePlayCardActionAndGetCardFromHand;
 
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeName("PlaySpanish41CardAction")
@@ -44,7 +40,7 @@ public class PlaySpanish41CardAction extends BaseAction {
 
     @Override
     public void execute(GameState state, PlayerActionRequest action) {
-        Card validCardInHand = validatePlayedCard(state, playedCard, action.playerId);
+        Card validCardInHand = validatePlayCardActionAndGetCardFromHand(state, playedCard,action);
         if (validCardInHand.getEffects().stream().noneMatch(effect -> effect.getClass().equals(Spanish41DrawCardEffect.class) || effect.getClass().equals(Spanish41BaseEffect.class))) {
             throw new InvalidInputException("You need to play a card that has either a colour or number value OR debuffs the required required draw card action!");
         }

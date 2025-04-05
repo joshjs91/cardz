@@ -2,6 +2,7 @@ package com.joshjs.gamangine.card.effects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.joshjs.gamangine.card.Card;
 import com.joshjs.gamangine.model.dto.PlayerActionRequest;
 import com.joshjs.gamangine.model.state.GameState;
 import jakarta.validation.constraints.NotBlank;
@@ -35,19 +36,12 @@ public class ModifyPlayerNumberAttributeEffect implements CardEffect {
     @Override
     public Map<String, String> getRequiredInputs() {
         HashMap<String, String> requiredInputs = new HashMap<>();
-        //TODO deal with some set of values somewhere?
-        requiredInputs.put("modificationValue", "Integer");
         requiredInputs.put("targetPlayer", "String");
         return requiredInputs;
     }
 
     @Override
-    public List<String> getFixedAttributes() {
-        return new ArrayList<>(List.of("calculationType", "attribute"));
-    }
-
-    @Override
-    public void applyEffect(GameState state, PlayerActionRequest action) {
+    public void applyEffect(GameState state, PlayerActionRequest action, Card card) {
         Map<String, Object> targetPlayerAttributes = state.getPlayerAttributes().get(targetPlayer);
         if (targetPlayer == null || targetPlayerAttributes == null) {
             throw new IllegalArgumentException("Invalid target player: " + targetPlayer);
