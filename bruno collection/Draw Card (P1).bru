@@ -1,0 +1,33 @@
+meta {
+  name: Draw Card (P1)
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8080/game/action
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "gameId": "{{gameId}}",
+    "playerId": "player1",
+    "action": {
+      "type": "PlayMatchingCardAction",
+      "playedCard": {
+          "name": "some spanish41 card",
+          "colour": " blue",
+          "number": 0,
+          "effects": [
+            {
+              "type": "MatchCardEffect",
+              "requiredInputs": {}
+            }
+          ]
+        }
+    }
+  
+  }
+}

@@ -1,0 +1,37 @@
+meta {
+  name: Get Game
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8080/game/state/{{gameId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "playerIds": [
+      "player1",
+      "player2"
+    ],
+    "gameType": "spanish41",
+    "gameEndedCondition": {
+      "type": "PlayerHasNoCardsInHandGameEndCondition"
+    },
+    "gameAttributes": {
+    },
+    "deckType": "spanish41"
+  }
+  
+}
+
+assert {
+  : 
+}
+
+script:post-response {
+  let data =res.body ;
+  bru.setEnvVar("gameId",data.gameId);
+}

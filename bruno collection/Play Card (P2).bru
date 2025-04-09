@@ -1,0 +1,33 @@
+meta {
+  name: Play Card (P2)
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8080/game/action
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "gameId": "{{gameId}}",
+    "playerId": "player2",
+    "action": {
+      "type": "PlayMatchingCardAction",
+      "playedCard": {
+          "name": "some spanish41 card",
+          "colour": " blue",
+          "number": 1,
+          "effects": [
+            {
+              "type": "MatchCardEffect",
+              "requiredInputs": {}
+            }
+          ]
+        }
+    }
+  
+  }
+}

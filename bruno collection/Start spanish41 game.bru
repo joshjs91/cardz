@@ -1,0 +1,37 @@
+meta {
+  name: Start spanish41 game
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8080/game/start
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "playerIds": [
+      "player1",
+      "player2"
+    ],
+    "gameType": "spanish41",
+    "gameEndedCondition": {
+      "type": "PlayerHasNoCardsInHandGameEndCondition"
+    },
+    "gameAttributes": {
+    },
+    "deckType": "spanish41"
+  }
+  
+}
+
+assert {
+  : 
+}
+
+script:post-response {
+  let data =res.body ;
+  bru.setEnvVar("gameId",data.gameId);
+}
